@@ -1,0 +1,2 @@
+# dots
+Your dotfiles companion
