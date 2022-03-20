@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 __dots_version="1.0"
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
@@ -9,24 +9,28 @@ source "${__dots_folder}/dotfiles.sh"
 __dots_param=$1 __dots_sub_param=$2
 
 function _print_option {
+  local option=$1 description=$2 is_sub_option=$3 max_column_width=10
   local description_padding
-  description_padding=$((10 - ${#1}))
+  description_padding=$(("$max_column_width" - ${#option}))
+
   _space
-  if [ -z "$3" ]; then
-    _print_colored "$1" "$uline$yellow"
+  if [[ -z $is_sub_option ]]; then
+    _print_colored "$option" "$uline$yellow"
   else
-    _space
-    _space
-    _print "$1"
-    description_padding=$((8 - ${#1}))
+    local sub_option_padding=2
+    repeat $sub_option_padding " "
+    _print "$option"
+    description_padding=$(("$max_column_width" - "$sub_option_padding" - ${#option}))
   fi
+
   _repeat "$description_padding" " "
-  _print_colored "$2" "$lgray"
+  _print_colored "$description" "$lgray"
   _newline
 }
 
 function _print_option_param {
-  _print_option "$1" "$2" true
+  local option=$1 description=$2 is_sub_option=true
+  _print_option "$option" "$description" "$is_sub_option"
 }
 
 function _print_main {
@@ -45,12 +49,13 @@ function _print_main {
   _print_option_param "edit" "Open \$EDITOR to edit dots config."
 
   _print_option "version" "Print dots version"
+  _print_option "update" "Update dots"
 
   _newline
 }
 
 function _print_incorrect_argument {
-  if [ -n "$2" ]; then
+  if [[ -n $2 ]]; then
     _print_colored "$1" "$dgray"
     _space
     _print_colored "$2" "$uline$lgray"
@@ -62,53 +67,59 @@ function _print_incorrect_argument {
   _newline
 }
 
-if [ -z "$__dots_param" ]; then
+if [[ -z $__dots_param ]]; then
   _print_main
-else
-  if [[ $__dots_param == 'sync' ]]; then
-    if [[ -z $__dots_sub_param ]]; then
-      _sync_dotfiles
-      exit 0
-    fi
+  exit 0
+fi
 
-    if [[ $__dots_sub_param == '-v' ]]; then
-      _sync_dotfiles verbose
-      exit 0
-    else
-      _print_incorrect_argument "$__dots_param" "$__dots_sub_param"
-      exit 0
-    fi
-  fi
-
-  if [[ $__dots_param == 'config' ]]; then
-    if [[ -z $__dots_sub_param ]]; then
-      if [[ -n $(which bat) ]]; then
-        bat "${__dots_folder}/config.yml"
-      else
-        cat "${__dots_folder}/config.yml"
-      fi
-      exit 0
-    fi
-
-    if [[ $__dots_sub_param == 'edit' ]]; then
-      $EDITOR "${__dots_folder}/config.yml"
-      exit 0
-    else
-      _print_incorrect_argument "$__dots_param" "$__dots_sub_param"
-      exit 0
-    fi
-  fi
-
-  if [[ $__dots_param == 'version' ]]; then
-    _print dots
-    _space
-    _print_colored version "$lgray"
-    _space
-    _print_colored "$__dots_version" "$bold"
-    _newline
+if [[ $__dots_param == 'sync' ]]; then
+  if [[ -z $__dots_sub_param ]]; then
+    _sync_dotfiles
     exit 0
   fi
 
-  _print_incorrect_argument "$__dots_param"
+  if [[ $__dots_sub_param == '-v' ]]; then
+    _sync_dotfiles verbose
+    exit 0
+  else
+    _print_incorrect_argument "$__dots_param" "$__dots_sub_param"
+    exit 0
+  fi
 fi
+
+if [[ $__dots_param == 'config' ]]; then
+  if [[ -z $__dots_sub_param ]]; then
+    if [[ -n $(which bat) ]]; then
+      bat "${__dots_folder}/config.yml"
+    else
+      cat "${__dots_folder}/config.yml"
+    fi
+    exit 0
+  fi
+
+  if [[ $__dots_sub_param == 'edit' ]]; then
+    $EDITOR "${__dots_folder}/config.yml"
+    exit 0
+  else
+    _print_incorrect_argument "$__dots_param" "$__dots_sub_param"
+    exit 0
+  fi
+fi
+
+if [[ $__dots_param == 'version' ]]; then
+  _print dots
+  _space
+  _print_colored version "$lgray"
+  _space
+  _print_colored "$__dots_version" "$bold"
+  _newline
+  exit 0
+fi
+
+if [[ $__dots_param == 'update' ]]; then
+  source "${__dots_folder}/install.sh"
+  exit 0
+fi
+
+_print_incorrect_argument "$__dots_param"
 

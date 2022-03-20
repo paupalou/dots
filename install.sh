@@ -46,16 +46,17 @@ function _directory_is_in_path {
 if [ ! -d "$__destination_path" ]; then
   printf "Installing dots on $(tput bold)%s" "$__destination_path"
   _reset_to_normal
+  _clone_dots
   echo
   # sudo ln -s "$(pwd)/dots/main.sh" "${1?"$HOME/.dots"}"
   #TODO
   # else if version == dots installed version print dots is latest version blalba
 else
   printf "Updating dots"
+  cd "$__destination_path" || exit 1
+  git pull
   echo
 fi
-
-_clone_dots
 
 # Add ~/.local/bin to the path if needed
 if _directory_is_in_path "$__bin_path"; then
