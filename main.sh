@@ -117,7 +117,7 @@ if [[ $__dots_param == 'version' ]]; then
 fi
 
 if [[ $__dots_param == 'update' ]]; then
-  source "${__dots_folder}/install.sh"
+  source "${__dots_folder}/install.sh" "$__destination_path"
   exit 0
 fi
 

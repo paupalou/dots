@@ -54,6 +54,7 @@ if [ ! -d "$__destination_path" ]; then
 else
   printf "Updating dots"
   cd "$__destination_path" || exit 1
+  echo
   git pull
   echo
 fi
