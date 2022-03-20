@@ -18,7 +18,7 @@ function _print_option {
     _print_colored "$option" "$uline$yellow"
   else
     local sub_option_padding=2
-    repeat $sub_option_padding " "
+    _repeat $sub_option_padding " "
     _print "$option"
     description_padding=$(("$max_column_width" - "$sub_option_padding" - ${#option}))
   fi
