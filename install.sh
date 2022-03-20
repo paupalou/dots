@@ -62,7 +62,10 @@ if _directory_is_in_path "$__bin_path"; then
   printf "%s is not in \$PATH" "$__bin_path"
   echo
 else
-  # printf "%s is in \$PATH" "$__bin_path"
+  if [ ! -d "$__bin_path" ]; then
+    mkdir -p "$__bin_path"
+  fi
+
   ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
 fi
 
