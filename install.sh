@@ -1,5 +1,6 @@
 #!/bin/bash
 
+__repository_url=https://github.com/paupalou/dots.git
 __destination_path=$HOME/.dots
 __bin_path=$HOME/.local/bin
 __bash_user_completions_dir=$XDG_DATA_HOME/bash-completion/completions
@@ -23,16 +24,8 @@ function _is_shell_installed {
   false
 }
 
-function _fetch_files {
-  ## TODO git clone
-
-  if [ ! -d "$1" ]; then
-    mkdir -p "$1"
-  fi
-  ## TODO remove this
-  for i in $(find -H "$HOME/dotfiles/dots" -type f ! -name install.sh); do
-    cp "$i" "$1"
-  done
+function _clone_dots {
+  git clone "$__repository_url" "$__destination_path"
 }
 
 function _reset_to_normal {
@@ -62,7 +55,7 @@ else
   echo
 fi
 
-_fetch_files "$__destination_path"
+_clone_dots
 
 # Add ~/.local/bin to the path if needed
 if _directory_is_in_path "$__bin_path"; then
