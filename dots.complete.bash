@@ -16,7 +16,7 @@ _config_completions() {
 _dots_completions() {
   COMPREPLY=()
 
-  local ACTIONS=([0]="sync" [1]="config" [2]="version")
+  local ACTIONS=([0]="sync" [1]="config" [2]="version" [3]="update")
   local cur=${COMP_WORDS[COMP_CWORD]}
 
   if [[ ($1 == "$__command" && $3 != "$__command") ]]; then

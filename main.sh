@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-__dots_version="1.0"
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
+__dots_version=$(cat "$__dots_folder"/version)
 
 source "${__dots_folder}/printer.sh"
 source "${__dots_folder}/dotfiles.sh"
@@ -54,6 +54,25 @@ function _print_main {
   _newline
 }
 
+function _sync {
+  if [[ -z $__dots_sub_param ]]; then
+    _sync_dotfiles
+    exit 0
+  fi
+
+  if [[ $__dots_sub_param == '-v' ]]; then
+    _sync_dotfiles verbose
+    exit 0
+  else
+    _print_incorrect_argument "$__dots_param" "$__dots_sub_param"
+    exit 0
+  fi
+}
+
+function _update {
+  source "${__dots_folder}/update.sh"
+}
+
 function _print_incorrect_argument {
   if [[ -n $2 ]]; then
     _print_colored "$1" "$dgray"
@@ -73,18 +92,7 @@ if [[ -z $__dots_param ]]; then
 fi
 
 if [[ $__dots_param == 'sync' ]]; then
-  if [[ -z $__dots_sub_param ]]; then
-    _sync_dotfiles
-    exit 0
-  fi
-
-  if [[ $__dots_sub_param == '-v' ]]; then
-    _sync_dotfiles verbose
-    exit 0
-  else
-    _print_incorrect_argument "$__dots_param" "$__dots_sub_param"
-    exit 0
-  fi
+  _sync
 fi
 
 if [[ $__dots_param == 'config' ]]; then
@@ -117,7 +125,7 @@ if [[ $__dots_param == 'version' ]]; then
 fi
 
 if [[ $__dots_param == 'update' ]]; then
-  source "${__dots_folder}/install.sh" "$__destination_path"
+  _update
   exit 0
 fi
 

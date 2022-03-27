@@ -42,13 +42,15 @@ function _print_skipped_files {
     return
   fi
 
-  local message="$1 files skipped"
+  local message="x $1 files"
   _box_line_start
   _space
   _space
+  _success_icon
+  _space
   _print "$file_count"
   _space
-  _print_colored "files skipped" "$lgray"
+  _print_colored "files" "$lgray"
   _box_line_end $((${#message} + 2))
   _newline
 }
@@ -119,6 +121,10 @@ function _link_file {
   fi
 
   if [ "$skip" != "true" ]; then
+    if [[ ! -d  $(dirname "$dst") ]]; then
+      mkdir -p $dst
+    fi
+
     ln -sfn "$src" "$dst"
     _file_linked "$src" "$dst" "$3"
     ((file_counter -= 1))
@@ -138,19 +144,15 @@ function _file_synced {
   file_path=\~/$(echo $destiny | cut -d'/' -f4-)
   file_full_path=$file_path/$file_name
 
-  item_length="x $file_full_path synced"
-  src_max_length=$(($(_box_line_max_length) - 2))
+  src_max_length=$(($(_box_line_max_length) - 4))
+  item_length="  x ${file_full_path:0:src_max_length}"
 
   _box_line_start
-  _success
+  _space
+  _space
+  _success_icon
   _space
   _print_colored "${file_full_path:0:src_max_length}" "$lgray"
-  if [[ ${#item_length} -lt $(_box_line_max_length) ]]; then
-    _space
-    _print "synced"
-  else
-    item_length="x ${file_full_path:0:src_max_length}"
-  fi
   _box_line_end ${#item_length}
   _newline
 }
@@ -164,22 +166,22 @@ function _file_linked {
   local destiny_max_length
   src=$(basename "$1")
 
-  item_length="$src linked"
+  item_length="x $src"
   src_max_length=$(($(_box_line_max_length) - 2))
   destiny_max_length=$src_max_length
 
   _box_line_start
-  _print_colored "${src:0:src_max_length}" "$cyan"
-  if [[ ${#item_length} -lt $(_box_line_max_length) ]]; then
-    _space
-    _print linked
-  else
-    item_length="${src:0:src_max_length}"
-  fi
-  _box_line_end ${#item_length}
+  _space
+  _space
+  _link_icon
+  _space
+  _print_colored "${src:0:src_max_length}" "$bold"
+  _box_line_end $((${#item_length} + 2))
   _newline
 
   _box_line_start
+  _repeat 4 " "
+
   item_length="└ ${destiny}"
   _print_colored "└" "$dgray"
   _space
@@ -187,6 +189,6 @@ function _file_linked {
   if [[ ${#item_length} -gt $(_box_line_max_length) ]]; then
     item_length="└ ${destiny:0:destiny_max_length}"
   fi
-  _box_line_end ${#item_length}
+  _box_line_end $((${#item_length} + 4))
   _newline
 }

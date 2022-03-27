@@ -53,17 +53,31 @@ function _repeat {
   for _i in $range ; do _print_colored "${str}" "$3"; done
 }
 
-function _success {
+function _success_icon {
   local success=""
   local success_color=$green
   # if user custom styles
-  if [ -n "$_user_success" ]; then
-    success=$_user_success
+  if [ -n "$_user_success_icon" ]; then
+    success=$_user_success_icon
   fi
-  if [ -n "$_user_success_color" ]; then
-    success_color=$_user_success_color
+  if [ -n "$_user_success_icon_color" ]; then
+    success_color=$_user_success_icon_color
   fi
 
   _print_colored "$success" "$success_color"
+}
+
+function _link_icon {
+  local link=""
+  local link_color=$lblue$bold
+  # if user custom styles
+  if [ -n "$_user_link_icon" ]; then
+    link=$_user_link_icon
+  fi
+  if [ -n "$_user_link_icon_color" ]; then
+    link_color=$_user_link_icon_color
+  fi
+
+  _print_colored "$link" "$link_color"
 }
 
