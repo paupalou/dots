@@ -70,8 +70,8 @@ function _print_arguments {
 function _print_installing {
   printf "Installing dots on $(tput bold)%s" "$__destination_path"
   _reset_to_normal
-  _clone_dots
-  echo
+  # _clone_dots
+  # echo
   # sudo ln -s "$(pwd)/dots/main.sh" "${1?"$HOME/.dots"}"
   #TODO
   # else if version == dots installed version print dots is latest version blalba
@@ -93,6 +93,8 @@ if [[ ! -d "$__destination_path" ]]; then
 else
   _print_updating
 fi
+
+printf "post install"
 
 # Add ~/.local/bin to the path if needed
 if _directory_is_in_path "$__bin_path"; then
