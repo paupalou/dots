@@ -98,8 +98,8 @@ _print_arguments
 if [[ ! -d "$__destination_path" ]]; then
   _print_installing
   printf "$(_success) Dots installed, run %sdots%s to see options" "$(tput bold)$(tput setaf 6)" "$(_reset_to_normal)"
-else
-  printf "$(_info) Dots its already installed in %s%s%s" "$(tput bold)$(tput setaf 6)" "$__destination_path" "$(_reset_to_normal)"
+# else
+#   printf "$(_info) Dots its already installed in %s%s%s" "$(tput bold)$(tput setaf 6)" "$__destination_path" "$(_reset_to_normal)"
 fi
 
 echo
