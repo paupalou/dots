@@ -70,26 +70,25 @@ function _print_arguments {
 }
 
 function _question {
-  printf " %s%s" "$(tput setaf 3)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s" "$(tput setaf 3)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _info {
-  printf " %s%s" "$(tput setaf 6)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s" "$(tput setaf 6)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _success {
-  printf " %s﫠%s" "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s" "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _error {
-  printf " %s%s" "$(tput setaf 1)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s" "$(tput setaf 1)$(tput bold)" "$(_reset_to_normal)"
 }
 
-
-
 function _print_installing {
-  printf "$(_info) Installing dots on $(tput bold)%s" "$__destination_path"
-  _reset_to_normal
+  printf "$(_info) Installing dots on %s%s%s" "$(tput setaf 6)$(tput bold)" "$__destination_path" "$(_reset_to_normal)"
+  echo
+  echo
   _clone_dots
   echo
 }
@@ -101,8 +100,9 @@ if [[ ! -d "$__destination_path" ]]; then
   printf "$(_success) Dots installed, run %sdots%s to see options" "$(tput bold)$(tput setaf 6)" "$(_reset_to_normal)"
 else
   printf "$(_info) Dots its already installed in %s%s%s" "$(tput bold)$(tput setaf 6)" "$__destination_path" "$(_reset_to_normal)"
-  echo
 fi
+
+echo
 
 # Add ~/.local/bin to the path if needed
 if _directory_is_in_path "$__bin_path"; then
