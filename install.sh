@@ -95,7 +95,7 @@ function _print_installing {
 
 _print_arguments
 
-if [[ ! -d "$__destination_path" ]]; then
+if [ ! -d "$__destination_path" ]; then
   _print_installing
   printf "$(_success) Dots installed, run $(tput bold)$(tput setaf 6)dots to see options"
   _reset_to_normal
