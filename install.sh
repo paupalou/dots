@@ -29,11 +29,14 @@ function _is_shell_installed {
 }
 
 function _clone_dots {
-  if [ ! -d "$__destination_path" ]; then
-    mkdir -p "$__destination_path"
+  local parent_dir
+  parent_dir=$(dirname "$__destination_path")
+
+  if [ ! -d "$parent_dir" ]; then
+    mkdir -p "$parent_dir"
   fi
-  cp "$HOME"/code/dots/* "$__destination_path"
-  # git clone "$__repository_url" "$__destination_path"
+
+  git clone "$__repository_url" "$__destination_path"
 }
 
 function _reset_to_normal {
@@ -45,71 +48,73 @@ function _directory_is_in_path {
   result=$(echo "$PATH" | grep -c ":$1")
   if [[ $result -gt 0 ]]; then
     true
+  else
+    false
   fi
-
-  false
 }
 
 function _print_arguments {
   if [[ $__destination_path_provided = false ]]; then
     local __user_destination_path
-    read -rp "Dots destination path [$(tput bold)${__destination_path}$(tput sgr0)]: " __user_destination_path
+    read -rp "$(_question) Dots destination path [$(tput bold)$(tput setaf 3)${__destination_path}$(tput sgr0)]: " __user_destination_path
     __destination_path=${__user_destination_path:-$__destination_path}
   fi
 
   if [[ $__bin_path_provided = false ]]; then
     local __user_bin_path
-    read -rp "Bin path [$(tput bold)${__bin_path}$(tput sgr0)]:" __user_bin_path
+    read -rp "$(_question) Bin path [$(tput bold)$(tput setaf 3)${__bin_path}$(tput sgr0)]:" __user_bin_path
     __bin_path=${__user_bin_path:-$__bin_path}
   fi
 
   echo
 }
 
+function _question {
+  printf " %s%s" "$(tput setaf 3)$(tput bold)" "$(_reset_to_normal)"
+}
+
+function _info {
+  printf " %s%s" "$(tput setaf 6)$(tput bold)" "$(_reset_to_normal)"
+}
+
+function _success {
+  printf " %s﫠%s" "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
+}
+
+function _error {
+  printf " %s%s" "$(tput setaf 1)$(tput bold)" "$(_reset_to_normal)"
+}
+
+
 
 function _print_installing {
-  printf "Installing dots on $(tput bold)%s" "$__destination_path"
+  printf "$(_info) Installing dots on $(tput bold)%s" "$__destination_path"
   _reset_to_normal
-  # _clone_dots
-  # echo
-  # sudo ln -s "$(pwd)/dots/main.sh" "${1?"$HOME/.dots"}"
-  #TODO
-  # else if version == dots installed version print dots is latest version blalba
-}
-
-function _print_updating {
-  printf "Updating dots"
-  cd "$__destination_path" || exit 1
-  echo
   _clone_dots
-  # git pull
   echo
 }
 
-# _print_arguments
-echo $1
-echo $2
+_print_arguments
 
 if [[ ! -d "$__destination_path" ]]; then
   _print_installing
+  printf "$(_success) Dots installed, run %sdots%s to see options" "$(tput bold)$(tput setaf 6)" "$(_reset_to_normal)"
 else
-  _print_updating
+  printf "$(_info) Dots its already installed in %s%s%s" "$(tput bold)$(tput setaf 6)" "$__destination_path" "$(_reset_to_normal)"
+  echo
 fi
-
-printf "post install"
 
 # Add ~/.local/bin to the path if needed
 if _directory_is_in_path "$__bin_path"; then
-  printf "%s is not in \$PATH" "$__bin_path"
-  echo
-else
   if [ ! -d "$__bin_path" ]; then
     mkdir -p "$__bin_path"
   fi
 
   ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
+else
+  printf "$(_error) %s is not in $(tput setaf 1)$(tput bold)\$PATH" "$__bin_path"
+  echo
 fi
-
 
 # install completions
 ## bash completions
