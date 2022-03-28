@@ -88,7 +88,7 @@ function _print_updating {
 
 _print_arguments
 
-if [ ! -d "$__destination_path" ]; then
+if [[ ! -d "$__destination_path" ]]; then
   _print_installing
 else
   _print_updating

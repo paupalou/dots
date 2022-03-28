@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
+__repository_url=https://github.com/paupalou/dots.git
+__version_url=https://raw.githubusercontent.com/paupalou/dots/main/version
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
 __dots_version=$(cat "$__dots_folder"/version)
-
-__fake_dot_version=1.0
 
 printf "Checking updates... "
 
@@ -12,10 +12,13 @@ function _is_last_version_installed {
   local padding=0000
 
   installed_version=$(echo "$__dots_version" | tr -d .)
-  last_version=$(echo "$__fake_dot_version" | tr -d .)
+  last_version=$(wget -qO - "$__version_url" | tr -d .)
 
   installed_version=$(printf "%s%s" "$installed_version" "${padding:${#installed_version}}")
   last_version=$(printf "%s%s" "$last_version" "${padding:${#last_version}}")
+
+  installed_version=${installed_version#0??}
+  last_version=${last_version#0??}
 
   if [[ $installed_version -eq $last_version ]]; then
     true
