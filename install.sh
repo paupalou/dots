@@ -4,6 +4,7 @@ __repository_url=https://github.com/paupalou/dots.git
 __destination_path=$HOME/.dots
 __bin_path=$HOME/.local/bin
 __bash_user_completions_dir=$XDG_DATA_HOME/bash-completion/completions
+__fish_user_completions_dir=$XDG_CONFIG_HOME/fish/completions
 __destination_path_provided=false
 __bin_path_provided=false
 
@@ -21,11 +22,16 @@ if [[ -z $XDG_DATA_HOME ]]; then
   __bash_user_completions_dir="$HOME/.local/share/bash-completion/completions"
 fi
 
+if [[ -z $XDG_CONFIG_HOME ]]; then
+  __fish_user_completions_dir="$HOME/.config/fish/completions"
+fi
+
 function _is_shell_installed {
   if [[ -n $(which "$1") ]]; then
-    true
+    return 0
   fi
-  false
+
+  return 1
 }
 
 function _clone_dots {
@@ -128,7 +134,14 @@ ln -fs "${__destination_path}/dots.complete.bash" "${__bash_user_completions_dir
 #TODO
 
 ## fish completions
-# sudo cp dots/dots.complete.bash /etc/bash_completion.d/dots
+if _is_shell_installed "fish"; then
+  if [ ! -d "$__fish_user_completions_dir" ]; then
+    mkdir -p "$__fish_user_completions_dir"
+  fi
+
+  # ln -fs "${__destination_path}/dots.complete.fish" "${__fish_user_completions_dir}/dots.fish"
+  ln -fs "$HOME/code/dots/dots.complete.fish" "${__fish_user_completions_dir}/dots.fish"
+fi
 
 # if [[ -n $(_is_shell_installed fish) ]]; then
 #   sudo cp dots/dots.complete.fish /usr/share/fish/vendor_completions.d/dots.fish

@@ -60,7 +60,7 @@ function _sync {
     exit 0
   fi
 
-  if [[ $__dots_sub_param == '-v' ]]; then
+  if [[ $__dots_sub_param == 'verbose' || $__dots_sub_param == '-v' ]] ; then
     _sync_dotfiles verbose
     exit 0
   else
@@ -105,7 +105,7 @@ if [[ $__dots_param == 'config' ]]; then
     exit 0
   fi
 
-  if [[ $__dots_sub_param == 'edit' ]]; then
+  if [[ $__dots_sub_param == 'edit' || $__dots_sub_param == '-e' ]]; then
     $EDITOR "${__dots_folder}/config.yml"
     exit 0
   else
