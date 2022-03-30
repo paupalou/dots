@@ -59,7 +59,7 @@ function _sync {
     exit 0
   fi
 
-  if [[ $__dots_sub_param == 'verbose' || $__dots_sub_param == '-v' ]] ; then
+  if [[ $__dots_sub_param == '--verbose' || $__dots_sub_param == '-v' ]] ; then
     _sync_dotfiles verbose
     exit 0
   else
