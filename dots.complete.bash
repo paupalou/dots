@@ -4,12 +4,12 @@
 __command=dots
 
 _sync_completions() {
-  local ACTIONS=([0]="-v" [1]="-i")
+  local ACTIONS=([0]="-v" [1]="--verbose")
   COMPREPLY=($(compgen -W "${ACTIONS[*]}" -- "$1"))
 }
 
 _config_completions() {
-  local ACTIONS=([0]="edit")
+  local ACTIONS=([0]="-e" [1]="--edit")
   COMPREPLY=($(compgen -W "${ACTIONS[*]}" -- "$1"))
 }
 

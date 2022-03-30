@@ -42,11 +42,10 @@ function _print_main {
   _newline
 
   _print_option "sync" "Symlink all files inside directory"
-  _print_option_param "-i" "Info."
-  _print_option_param "-v" "Verbose mode, show each symlink path."
+  _print_option_param "-v or --verbose" "Verbose mode, show each symlink path."
 
   _print_option "config" "View or edit the config"
-  _print_option_param "edit" "Open \$EDITOR to edit dots config."
+  _print_option_param "-e or --edit" "Open \$EDITOR to edit dots config."
 
   _print_option "version" "Print dots version"
   _print_option "update" "Update dots"
@@ -105,7 +104,7 @@ if [[ $__dots_param == 'config' ]]; then
     exit 0
   fi
 
-  if [[ $__dots_sub_param == 'edit' || $__dots_sub_param == '-e' ]]; then
+  if [[ $__dots_sub_param == '--edit' || $__dots_sub_param == '-e' ]]; then
     $EDITOR "${__dots_folder}/config.yml"
     exit 0
   else
@@ -114,7 +113,7 @@ if [[ $__dots_param == 'config' ]]; then
   fi
 fi
 
-if [[ $__dots_param == 'version' ]]; then
+if [[ $__dots_param == 'version' || $__dots_param == '-v' ]]; then
   _print dots
   _space
   _print_colored version "$lgray"
