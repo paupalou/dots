@@ -131,7 +131,16 @@ fi
 ln -fs "${__destination_path}/dots.complete.bash" "${__bash_user_completions_dir}/dots"
 
 ## zsh completions
-#TODO
+# TODO Make native zsh completions
+if _is_shell_installed "zsh"; then
+  if [[ $(grep -c "bashcompinit" < "$HOME/.zshrc") -eq 0 ]]; then
+    echo "autoload bashcompinit && bashcompinit" | tee -a "$HOME/.zshrc" >/dev/null
+  fi
+
+  if [[ $(grep -c "dots.complete.bash" < "$HOME/.zshrc") -eq 0 ]]; then
+    echo "source ${__destination_path}/dots.complete.bash" | tee -a "$HOME/.zshrc" >/dev/null
+  fi
+fi
 
 ## fish completions
 if _is_shell_installed "fish"; then
@@ -139,10 +148,5 @@ if _is_shell_installed "fish"; then
     mkdir -p "$__fish_user_completions_dir"
   fi
 
-  # ln -fs "${__destination_path}/dots.complete.fish" "${__fish_user_completions_dir}/dots.fish"
-  ln -fs "$HOME/code/dots/dots.complete.fish" "${__fish_user_completions_dir}/dots.fish"
+  ln -fs "${__destination_path}/dots.complete.fish" "${__fish_user_completions_dir}/dots.fish"
 fi
-
-# if [[ -n $(_is_shell_installed fish) ]]; then
-#   sudo cp dots/dots.complete.fish /usr/share/fish/vendor_completions.d/dots.fish
-# fi
