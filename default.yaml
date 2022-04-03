@@ -1,7 +1,7 @@
 # default dots config settings (read-only)
 
 # core
-dotfiles_path: $HOME/dotfiles
+dotfiles_path: ~/dotfiles
 
 # misc
 verbose: false

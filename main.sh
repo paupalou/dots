@@ -14,22 +14,22 @@ function _print_option {
   local option=$1 description=$2 is_sub_option=$3
   local max_column_width description_padding
 
-  max_column_width=$(_get_config_setting "main_option_max_width")
+  max_column_width=$(_dots_setting "main_option_max_width")
   description_padding=$(("$max_column_width" - ${#option}))
 
   _space
   if [[ -z $is_sub_option ]]; then
-    _print_colored "$option" "$(_get_config_setting "main_option_command")"
+    _print_colored "$option" "$(_dots_color "main_option_command")"
     _repeat "$description_padding" " "
-    _print_colored "$description" "$(_get_config_setting "main_option_description")"
+    _print_colored "$description" "$(_dots_color "main_option_description")"
   else
     local sub_option_padding
-    sub_option_padding=$(_get_config_setting "main_sub_option_padding")
+    sub_option_padding=$(_dots_setting "main_sub_option_padding")
     _repeat "$sub_option_padding" " "
-    _print_colored "$option" "$(_get_config_setting "main_sub_option_command")"
+    _print_colored "$option" "$(_dots_color "main_sub_option_command")"
     description_padding=$(("$max_column_width" - "$sub_option_padding" - ${#option}))
     _repeat "$description_padding" " "
-    _print_colored "$description" "$(_get_config_setting "main_sub_option_description")"
+    _print_colored "$description" "$(_dots_color "main_sub_option_description")"
   fi
 
   _newline
@@ -64,7 +64,7 @@ function _print_main {
 
 function _sync {
   if [[ -z $__dots_sub_param ]]; then
-    _sync_dotfiles "$(_get_config_setting "verbose")"
+    _sync_dotfiles "$(_dots_setting "verbose")"
     exit
   fi
 
@@ -131,9 +131,9 @@ fi
 if [[ $__dots_param == 'version' || $__dots_param == '-v' ]]; then
   _print dots
   _space
-  _print_colored version "$(_get_config_setting "version_word")"
+  _print_colored version "$(_dots_color "version_word")"
   _space
-  _print_colored "$__dots_version" "$(_get_config_setting "version_number")"
+  _print_colored "$__dots_version" "$(_dots_color "version_number")"
   _newline
   exit
 fi

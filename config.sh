@@ -69,7 +69,8 @@ function _create_variables() {
   eval "${yaml_string}"
 }
 
-function _get_config_setting() {
+
+function _read_config_value {
   local config_key=$1
 
   eval default_config_value="( \${dots_default_${config_key}[@]} )"
@@ -78,28 +79,37 @@ function _get_config_setting() {
   local user_config_setting=dots_user_$config_key
   local user_config_value=${!user_config_setting}
 
-  local config_value
+  unset __config_value
 
   if [[ -z ${user_config_value} ]]; then
-    config_value=( "${default_config_value[@]}" )
+    __config_value=( "${default_config_value[@]}" )
   else
-    config_value=( "${user_config_value[@]}" )
+    __config_value=( "${user_config_value[@]}" )
   fi
+}
 
+function _dots_setting {
+  _read_config_value "$1"
   local result
-  for i in "${config_value[@]}"; do
-    if [[ -z ${!i} ]]; then
-      result+=$i
-    else
-      result+="${!i}"
-    fi
+  for i in "${__config_value[@]}"; do
+    result+="$i"
   done
   echo "$result"
 }
 
+function _dots_color {
+  _read_config_value "$1"
+  local result
+  for i in "${__config_value[@]}"; do
+    eval result+="\$${i}"
+  done
+  echo "$result"
+}
+
+
 function _create_config {
   local dotfiles_path
-  dotfiles_path=$(_get_config_setting "dotfiles_path")
+  dotfiles_path=$(_dots_setting "dotfiles_path")
 
   if [[ -f ${dotfiles_path}/dots/config.yaml ]]; then
     printf "Config file already exists: %s%s%s" "$(tput bold)" "$__user_config" "$(tput sgr0)"
