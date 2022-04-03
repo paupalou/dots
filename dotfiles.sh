@@ -91,7 +91,7 @@ function _sync_dotfiles {
       _link_file "$matching_file" "$destiny" "$verbose"
     done
 
-    if [[ -z "$verbose" ]]; then
+    if [[ -z "$verbose" ]] || [[ "$verbose" == false ]]; then
       _print_skipped_files "$skipped_files_counter"
     fi
 
@@ -110,7 +110,7 @@ function _link_file {
       local currentSrc
       currentSrc="$(readlink "$dst")"
       if [ "$currentSrc" == "$src" ]; then
-        if [ -n "$verbose" ]; then
+        if [[ "$verbose" == true ]]; then
           _file_synced "$src" "$dst"
         else
           ((skipped_files_counter += 1))
@@ -126,7 +126,7 @@ function _link_file {
     fi
 
     ln -sfn "$src" "$dst"
-    _file_linked "$src" "$dst" "$3"
+    _file_linked "$src" "$dst" "$verbose"
     ((file_counter -= 1))
   fi
 }

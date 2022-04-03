@@ -9,7 +9,7 @@ _sync_completions() {
 }
 
 _config_completions() {
-  local ACTIONS=([0]="-e" [1]="--edit")
+  local ACTIONS=([0]="-c" [1]="--create" [2]="-d" [3]="--default" [4]="-e" [5]="--edit")
   COMPREPLY=($(compgen -W "${ACTIONS[*]}" -- "$1"))
 }
 

@@ -1,0 +1,26 @@
+# default dots config settings (read-only)
+
+# core
+dotfiles_path: $HOME/dotfiles
+
+# misc
+verbose: false
+
+# theme
+## main
+main:
+  option:
+    max_width: 24
+    command:
+      - uline
+      - yellow
+    description: lgray
+  sub_option:
+    padding: 4
+    command: normal
+    description: lgray
+
+## version
+version:
+  word: lgray
+  number: bold
