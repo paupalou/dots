@@ -1,12 +1,18 @@
 # default dots config settings (read-only)
 
 # core
-dotfiles_path: ~/dotfiles
+dotfiles_path: $HOME/dotfiles
 
 # misc
 verbose: false
 
 # theme
+success:
+  char: 
+  style:
+    - green
+    - bold
+
 ## main
 main:
   option:

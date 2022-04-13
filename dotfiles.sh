@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # shellcheck disable=SC2086
 
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
@@ -57,6 +57,7 @@ function _print_skipped_files {
 
 function _sync_dotfiles {
   _box_start dotfiles
+  _disable_input
 
   local verbose=$1
   local overwrite_all=false backup_all=false skip_all=false
@@ -64,13 +65,17 @@ function _sync_dotfiles {
 
   _disable_globbing
   excluded_files=$(_name_not_match "path.fish")
-  excluded_paths=$(_path_not_match ".git" "script" "lab" "oli" "dots")
+  excluded_paths=$(_path_not_match ".git")
   dotfiles="${HOME}/dotfiles"
+
+  # TODO Check if fd is available then find as fallback
+  # for topic in $(fd --base-directory $dotfiles --type d | sort); do
 
   for topic in $(find -H "$dotfiles" -mindepth 1 -maxdepth 1 -type d $excluded_paths $excluded_files -printf '%P\n' | sort); do
     _disable_globbing
     excluded_paths=$(_path_not_match "*/.git/*")
     files=$(find -H "$dotfiles/$topic" -type f $excluded_paths $excluded_files ! -name '*:*')
+    # files=$(fd . ${dotfiles}/${topic} --type f --hidden --exclude '*:*' --exclude path.fish --exclude '.git')
     local skipped_files_counter=0
 
     if [[ ${#files} -gt 0 ]]; then
@@ -97,6 +102,7 @@ function _sync_dotfiles {
 
   done
 
+  _enable_input
   _box_end
 }
 

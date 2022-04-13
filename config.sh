@@ -106,23 +106,56 @@ function _dots_color {
   echo "$result"
 }
 
+function _link_dots_config {
+  local success_char success_style
+  success_char=$(_dots_setting "success_char")
+  success_style=$(_dots_color "success_style")
+
+  ln -sfn "$1" "$__user_config"
+  _print_colored "$success_char" "$success_style"
+  _space
+  _print "config file:"
+  _space
+  _print_colored "$1" "$uline"
+  _print_colored " -> " "$bold"
+  _print_colored "$__user_config" "$uline"
+  _newline
+}
+
 
 function _create_config {
-  local dotfiles_path
-  dotfiles_path=$(_dots_setting "dotfiles_path")
-
-  if [[ -f ${dotfiles_path}/dots/config.yaml ]]; then
-    printf "Config file already exists: %s%s%s" "$(tput bold)" "$__user_config" "$(tput sgr0)"
-    echo
-    exit 1
-  fi
+  local dotfiles_path dots_config
+  eval dotfiles_path="$(_dots_setting "dotfiles_path")"
+  dots_config=${dotfiles_path}/dots/config.yaml
 
   if [[ ! -d ${dotfiles_path}/dots ]]; then
     mkdir -p "${dotfiles_path}/dots"
   fi
 
-  touch "${dotfiles_path}/dots/config.yaml"
-  echo "# user config file" >> "${dotfiles_path}/dots/config.yaml"
+  if [[ ! -f $dots_config ]]; then
+    touch "$dots_config"
+    echo "# user config file" >> "$dots_config"
+  fi
+
+  if [[ -f $__user_config ]]; then
+    if [[ $(readlink "$__user_config") != "$dots_config" ]]; then
+      printf "Config file exists: %s%s%s" "$(tput bold)" "$__user_config" "$(tput sgr0)"
+      echo
+      printf "Renaming to: %s%s%s" "$(tput bold)" "${__user_config}.backup" "$(tput sgr0)"
+      echo
+      mv "$__user_config" "${__user_config}.backup"
+      _link_dots_config "$dots_config"
+      echo
+      exit
+    else
+      printf "Config file already linked: %s%s%s" "$(tput bold)" "$__user_config" "$(tput sgr0)"
+      echo
+      exit
+    fi
+  else
+    _link_dots_config "$dots_config"
+  fi
+
 }
 
 function _echo_config {
@@ -149,6 +182,8 @@ function _edit_config() {
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
 __default_config=${__dots_folder}/default.yaml
 __user_config=$XDG_CONFIG_HOME/dots/config.yaml
+
+source "${__dots_folder}/printer.sh"
 
 _create_variables "$__default_config" "dots_default"
 

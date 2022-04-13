@@ -12,6 +12,18 @@ function _enable_globbing {
   set +f
 }
 
+function _disable_input {
+  if [ -t 0 ]; then
+     stty -echo -icanon time 0 min 0
+  fi
+}
+
+function _enable_input {
+  if [ -t 0 ]; then
+    stty sane
+  fi
+}
+
 function _get_distro {
   cat /etc/*-release | grep '^ID=' | cut -d "=" -f 2
 }
