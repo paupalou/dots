@@ -13,6 +13,16 @@ success:
     - green
     - bold
 
+sync:
+  topic:
+    # icon: 📁
+    icon: 
+    icon_style: lcyan
+    style:
+      - bold
+      - uline
+      - cyan
+
 ## main
 main:
   option:

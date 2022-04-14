@@ -4,6 +4,7 @@
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
 
 source "${__dots_folder}/system.sh"
+source "${__dots_folder}/config.sh"
 source "${__dots_folder}/printer.sh"
 source "${__dots_folder}/box.sh"
 
@@ -27,12 +28,15 @@ function _path_not_match {
 
 function _print_topic {
   local topic=$1
+  local sync_topic_icon
+  local message
+  sync_topic_icon=$(_dots_setting "sync_topic_icon")
+
   _box_line_start
-  _print_colored "" "$lcyan"
+  _print_colored "$sync_topic_icon" "$(_dots_color "sync_topic_icon_style")"
   _space
-  _print_colored "$topic" "$bold$uline$cyan"
-  _space
-  _box_line_end $((${#topic} + 3))
+  _print_colored "$topic" "$(_dots_color "sync_topic_style")"
+  _box_line_end $((${#topic} + 1 + $(echo $sync_topic_icon | wc -L)))
   _newline
 }
 
