@@ -13,6 +13,9 @@ box:
   style:
     - bold
     - lblue
+  title:
+    - bold
+    - lblue
   char:
     # top_left: ┌
     # top_right: ┐

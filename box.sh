@@ -25,6 +25,12 @@ function _box_style {
   echo "$box_style"
 }
 
+function _box_title_style {
+  local box_style
+  box_style=$(_dots_color "box_title_style")
+  echo "$box_style"
+}
+
 function _box_padding {
   local box_padding
   box_padding=$(_dots_setting "box_padding")
@@ -62,9 +68,9 @@ function _box_start {
   _print_colored "$line_start" "$(_box_style)"
   _repeat "$padding_left" "$filler" "$(_box_style)"
   if [[ "$pending_border" -lt 0 ]]; then
-    _print_colored " ${box_title:0:$((${#box_title} - "${pending_border#-}"))} " "$(_box_style)"
+    _print_colored " ${box_title:0:$((${#box_title} - "${pending_border#-}"))} " "$(_box_title_style)"
   elif [[ -n ${box_title} ]]; then
-    _print_colored " ${box_title} " "$(_box_style)"
+    _print_colored " ${box_title} " "$(_box_title_style)"
   fi
   _repeat "$pending_border" "$filler" "$(_box_style)"
   _print_colored "$line_end" "$(_box_style)"
