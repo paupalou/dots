@@ -119,6 +119,7 @@ if _directory_is_in_path "$__bin_path"; then
   ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
 else
   printf "$(_error) %s is not in $(tput setaf 1)$(tput bold)\$PATH" "$__bin_path"
+  _reset_to_normal
   echo
 fi
 
