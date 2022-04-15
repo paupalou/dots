@@ -126,10 +126,10 @@ function _link_dots_config {
 function _create_config {
   local dotfiles_path dots_config
   eval dotfiles_path="$(_dots_setting "dotfiles_path")"
-  dots_config=${dotfiles_path}/dots/config.yaml
+  dots_config=${dotfiles_path}/dots/.config/dots/config.yaml
 
-  if [[ ! -d ${dotfiles_path}/dots ]]; then
-    mkdir -p "${dotfiles_path}/dots"
+  if [[ ! -d ${dotfiles_path}/dots/.config/dots ]]; then
+    mkdir -p "${dotfiles_path}/dots/.config/dots"
   fi
 
   if [[ ! -f $dots_config ]]; then
