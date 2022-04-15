@@ -76,9 +76,6 @@ function _read_config_value {
   eval default_config_value="( \${dots_default_${config_key}[@]} )"
   eval user_config_value="( \${dots_user_${config_key}[@]} )"
 
-  local user_config_setting=dots_user_$config_key
-  local user_config_value=${!user_config_setting}
-
   unset __config_value
 
   if [[ -z ${user_config_value} ]]; then
