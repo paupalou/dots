@@ -54,17 +54,11 @@ function _repeat {
 }
 
 function _success_icon {
-  local success=""
-  local success_color=$green
-  # if user custom styles
-  if [ -n "$_user_success_icon" ]; then
-    success=$_user_success_icon
-  fi
-  if [ -n "$_user_success_icon_color" ]; then
-    success_color=$_user_success_icon_color
-  fi
+  local success_char success_style
+  success_char=$(_dots_setting "success_icon_char")
+  success_style=$(_dots_color "success_icon_style")
 
-  _print_colored "$success" "$success_color"
+  _print_colored "$success_char" "$success_style"
 }
 
 function _link_icon {

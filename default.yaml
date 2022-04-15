@@ -7,17 +7,36 @@ dotfiles_path: $HOME/dotfiles
 verbose: false
 
 # theme
-success:
-  char: 
+box:
+  size: 0
+  padding: 1
   style:
-    - green
     - bold
+    - lblue
+  char:
+    # top_left: ┌
+    # top_right: ┐
+    # bottom_left: └
+    # bottom_right: ┘
+    top_left: ╭
+    top_right: ╮
+    bottom_left: ╰
+    bottom_right: ╯
+    fill_x: ─
+    fill_y: │
+
+success:
+  icon:
+    char: 
+    style:
+      - green
+      - bold
 
 sync:
   topic:
-    # icon: 📁
-    icon: 
-    icon_style: lcyan
+    icon:
+      char: 
+      style: lcyan
     style:
       - bold
       - uline

@@ -28,25 +28,30 @@ function _path_not_match {
 
 function _print_topic {
   local topic=$1
-  local sync_topic_icon
+  local sync_topic_icon_char
   local message
-  sync_topic_icon=$(_dots_setting "sync_topic_icon")
+  sync_topic_icon_char=$(_dots_setting "sync_topic_icon_char")
 
   _box_line_start
-  _print_colored "$sync_topic_icon" "$(_dots_color "sync_topic_icon_style")"
+  _print_colored "$sync_topic_icon_char" "$(_dots_color "sync_topic_icon_style")"
   _space
   _print_colored "$topic" "$(_dots_color "sync_topic_style")"
-  _box_line_end $((${#topic} + 1 + $(echo $sync_topic_icon | wc -L)))
+  _box_line_end $((${#topic} + 1 + $(echo $sync_topic_icon_char | wc -L)))
   _newline
 }
 
 function _print_skipped_files {
   local file_count=$1
+  local success_icon_char
+  local message
+
   if [[ "$file_count" -eq 0 ]]; then
     return
   fi
 
-  local message="x $1 files"
+  success_icon_char=$(_dots_setting "success_icon_char")
+  message="$success_icon_char $file_count files"
+
   _box_line_start
   _space
   _space
@@ -55,7 +60,7 @@ function _print_skipped_files {
   _print "$file_count"
   _space
   _print_colored "files" "$lgray"
-  _box_line_end $((${#message} + 2))
+  _box_line_end "$(( 2 + $(echo $message | wc -L)))"
   _newline
 }
 

@@ -2,14 +2,13 @@
 
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
 
+source "${__dots_folder}/config.sh"
 source "${__dots_folder}/colors.sh"
 source "${__dots_folder}/printer.sh"
 
 function _box_max_width {
-  local box_size=72
-  if [ -n "$_user_box_size" ]; then
-    box_size=$_user_box_size
-  fi
+  local box_size
+  box_size=$(_dots_setting "box_size")
 
   if [[ "$(tput cols)" -lt $box_size ]]; then
     tput cols
@@ -21,31 +20,26 @@ function _box_max_width {
 }
 
 function _box_style {
-  # if user custom styles
-  if [ -n "$_user_box_style" ]; then
-    echo "$_user_box_style"
-    return
-  fi
-
-  local default="$bold$lblue"
-  echo "$default"
+  local box_style
+  box_style=$(_dots_color "box_style")
+  echo "$box_style"
 }
 
 function _box_padding {
-  # if user custom styles
-  if [ -n "$_user_box_padding" ]; then
-    echo "$_user_box_padding"
-    return
-  fi
-
-  local default=1
-  echo $default
+  local box_padding
+  box_padding=$(_dots_setting "box_padding")
+  echo "$box_padding"
 }
 
 function _box_start {
   local box_title=$1
-  local line_start="┌"
-  local line_end="┐"
+  local line_start
+  local line_end
+  local filler
+  line_start=$(_dots_setting "box_char_top_left")
+  line_end=$(_dots_setting "box_char_top_right")
+  filler=$(_dots_setting "box_char_fill_x")
+
 
   local padding_left=8
 
@@ -66,35 +60,41 @@ function _box_start {
   fi
 
   _print_colored "$line_start" "$(_box_style)"
-  _repeat "$padding_left" "─" "$(_box_style)"
+  _repeat "$padding_left" "$filler" "$(_box_style)"
   if [[ "$pending_border" -lt 0 ]]; then
     _print_colored " ${box_title:0:$((${#box_title} - "${pending_border#-}"))} " "$(_box_style)"
   elif [[ -n ${box_title} ]]; then
     _print_colored " ${box_title} " "$(_box_style)"
   fi
-  _repeat "$pending_border" "─" "$(_box_style)"
+  _repeat "$pending_border" "$filler" "$(_box_style)"
   _print_colored "$line_end" "$(_box_style)"
 
   _cr
 }
 
 function _box_end {
-  local line_start="└"
-  local line_end="┘"
+  local line_start
+  local line_end
+  local filler
+  line_start=$(_dots_setting "box_char_bottom_left")
+  line_end=$(_dots_setting "box_char_bottom_right")
+  filler=$(_dots_setting "box_char_fill_x")
 
   local box_content_width
   box_content_width=$(($(_box_max_width) - 2))
 
   _print_colored "$line_start" "$(_box_style)"
-  _repeat "$box_content_width" "─" "$(_box_style)"
+  _repeat "$box_content_width" "$filler" "$(_box_style)"
   _print_colored "$line_end" "$(_box_style)"
 
   _cr
 }
 
 function _box_line_start {
-  local line_start="│"
-  _print_colored "$line_start" "$(_box_style)"
+  local filler
+  filler=$(_dots_setting "box_char_fill_y")
+
+  _print_colored "$filler" "$(_box_style)"
   _repeat "$(_box_padding)" " "
 }
 
@@ -102,10 +102,11 @@ function _box_line_end {
   # 1 per each border and box padding value per each side
   local box_content_width=$(($(_box_max_width) - 2 - $(($(_box_padding) * 2))))
   local spaces_needed=$((box_content_width - $1 + $(_box_padding)))
+  local filler
+  filler=$(_dots_setting "box_char_fill_y")
 
-  local line_end="│"
   _repeat "$spaces_needed" " "
-  _print_colored "$line_end" "$(_box_style)"
+  _print_colored "$filler" "$(_box_style)"
 }
 
 function _box_line_max_length {
