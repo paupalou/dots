@@ -155,6 +155,14 @@ function _create_config {
 
 }
 
+function _write_to_config {
+  if [[ ! -f $__user_config ]]; then
+    _create_config
+  fi
+
+  echo "$1" >> "$__user_config"
+}
+
 function _echo_config {
   local default=$1
   local config
