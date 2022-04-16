@@ -8,7 +8,7 @@ verbose: false
 
 # theme
 box:
-  size: 0
+  size: 72
   padding: 1
   style:
     - bold
