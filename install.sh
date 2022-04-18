@@ -3,7 +3,6 @@
 __repository_url=https://github.com/paupalou/dots.git
 __destination_path=$HOME/.dots
 __bin_path=$HOME/.local/bin
-__dotfiles_path=$HOME/dotfiles
 __bash_user_completions_dir=$XDG_DATA_HOME/bash-completion/completions
 __fish_user_completions_dir=$XDG_CONFIG_HOME/fish/completions
 __destination_path_provided=false
@@ -71,12 +70,6 @@ function _print_arguments {
     local __user_bin_path
     read -rp "$(_question) Bin path [$(tput bold)$(tput setaf 3)${__bin_path}$(tput sgr0)]:" __user_bin_path
     __bin_path=${__user_bin_path:-$__bin_path}
-  fi
-
-  local __user_dotfiles_path
-  read -rp "$(_question) Dotfiles path [$(tput bold)$(tput setaf 3)${__dotfiles_path}$(tput sgr0)]:" __user_dotfiles_path
-  if [[  $__user_dotfiles_path != "$__dotfiles_path" ]]; then
-    _write_to_config "dotfiles_path: ${__user_dotfiles_path}"
   fi
 
   echo
