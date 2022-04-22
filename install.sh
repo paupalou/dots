@@ -3,10 +3,12 @@
 __repository_url=https://github.com/paupalou/dots.git
 __destination_path=$HOME/.dots
 __bin_path=$HOME/.local/bin
+__dotfiles_path=$HOME/dotfiles
 __bash_user_completions_dir=$XDG_DATA_HOME/bash-completion/completions
 __fish_user_completions_dir=$XDG_CONFIG_HOME/fish/completions
 __destination_path_provided=false
 __bin_path_provided=false
+__dotfiles_path_provided=false
 
 if [ "$#" -gt 0 ]; then
   __destination_path_provided=true
@@ -16,6 +18,11 @@ fi
 if [ "$#" -gt 1 ]; then
   __bin_path_provided=true
   __bin_path=$2
+fi
+
+if [ "$#" -gt 2 ]; then
+  __dotfiles_path_provided=true
+  __dotfiles_path=$3
 fi
 
 if [[ -z $XDG_DATA_HOME ]]; then
@@ -60,18 +67,38 @@ function _directory_is_in_path {
 }
 
 function _print_arguments {
-  if [[ $__destination_path_provided = false ]]; then
-    local __user_destination_path
-    read -rp "$(_question) Dots destination path [$(tput bold)$(tput setaf 3)${__destination_path}$(tput sgr0)]: " __user_destination_path
-    __destination_path=${__user_destination_path:-$__destination_path}
+  # if [[ $__destination_path_provided = false ]]; then
+  #   local __user_destination_path
+  #   read -rep "$(_question) Dots destination path [$(tput bold)$(tput setaf 3)${__destination_path}$(tput sgr0)]: " __user_destination_path
+  #   __destination_path=${__user_destination_path:-$__destination_path}
+  # fi
+
+  # if [[ $__bin_path_provided = false ]]; then
+  #   local __user_bin_path
+  #   read -rep "$(_question) Bin path [$(tput bold)$(tput setaf 3)${__bin_path}$(tput sgr0)]:" __user_bin_path
+  #   __bin_path=${__user_bin_path:-$__bin_path}
+  # fi
+
+  if [[ $__dotfiles_path_provided = false ]]; then
+    local __user_dotfiles_path
+    read -rep "$(_question) Dotfiles path [$(tput bold)$(tput setaf 3)${__dotfiles_path}$(tput sgr0)]:" __user_dotfiles_path
+    __dotfiles_path=${__user_dotfiles_path:-$__dotfiles_path}
   fi
 
-  if [[ $__bin_path_provided = false ]]; then
-    local __user_bin_path
-    read -rp "$(_question) Bin path [$(tput bold)$(tput setaf 3)${__bin_path}$(tput sgr0)]:" __user_bin_path
-    __bin_path=${__user_bin_path:-$__bin_path}
+  local dots_config=${__dotfiles_path}/dots/.config/dots/config.yaml
+
+  if [[ ! -d ${__dotfiles_path}/dots/.config/dots ]]; then
+    mkdir -p "${__dotfiles_path}/dots/.config/dots"
   fi
 
+  if [[ ! -f $dots_config ]]; then
+    touch "$dots_config"
+    echo "# user config file" >> "$dots_config"
+  fi
+
+  if [[ $(grep "dotfiles_path" "$dots_config" --count) == 0 ]]; then
+    echo "dotfiles_path: ${__dotfiles_path}" >> "$dots_config"
+  fi
   echo
 }
 
@@ -99,15 +126,15 @@ function _print_installing {
   echo
 }
 
-_print_arguments
-
-if [ ! -d "$__destination_path" ]; then
-  _print_installing
-  printf "$(_success) Dots installed, run %sdots$(_reset_to_normal) to see options" "$(tput bold)$(tput setaf 6)"
-else
+if [ -d "$__destination_path" ]; then
   printf "$(_info) Dots its already installed in %s%s%s" "$(tput bold)$(tput setaf 6)" "$__destination_path" "$(_reset_to_normal)"
+  echo
+  exit 0
 fi
 
+_print_arguments
+_print_installing
+printf "$(_success) Dots installed, run %sdots$(_reset_to_normal) to see options" "$(tput bold)$(tput setaf 6)"
 echo
 
 # Add ~/.local/bin to the path if needed

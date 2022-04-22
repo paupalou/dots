@@ -174,7 +174,7 @@ function _echo_config {
   fi
 
   if [[ -n $(which bat) ]]; then
-    bat "$config"
+    bat --style="grid,header,numbers" "$config"
   else
     cat "$config"
   fi
