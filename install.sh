@@ -5,24 +5,15 @@ __destination_path=$HOME/.dots
 __bin_path=$HOME/.local/bin
 __dotfiles_path=$HOME/dotfiles
 __bash_user_completions_dir=$XDG_DATA_HOME/bash-completion/completions
+__zsh_user_completions_dir=$ZSH/completions
 __fish_user_completions_dir=$XDG_CONFIG_HOME/fish/completions
 __destination_path_provided=false
 __bin_path_provided=false
 __dotfiles_path_provided=false
 
 if [ "$#" -gt 0 ]; then
-  __destination_path_provided=true
-  __destination_path=$1
-fi
-
-if [ "$#" -gt 1 ]; then
-  __bin_path_provided=true
-  __bin_path=$2
-fi
-
-if [ "$#" -gt 2 ]; then
   __dotfiles_path_provided=true
-  __dotfiles_path=$3
+  __dotfiles_path=$1
 fi
 
 if [[ -z $XDG_DATA_HOME ]]; then
@@ -31,6 +22,10 @@ fi
 
 if [[ -z $XDG_CONFIG_HOME ]]; then
   __fish_user_completions_dir="$HOME/.config/fish/completions"
+fi
+
+if [[ -z $ZSH ]]; then
+  __zsh_user_completions_dir="$HOME/.local/share/zsh-completion/completions"
 fi
 
 function _is_shell_installed {
@@ -66,19 +61,7 @@ function _directory_is_in_path {
   fi
 }
 
-function _print_arguments {
-  # if [[ $__destination_path_provided = false ]]; then
-  #   local __user_destination_path
-  #   read -rep "$(_question) Dots destination path [$(tput bold)$(tput setaf 3)${__destination_path}$(tput sgr0)]: " __user_destination_path
-  #   __destination_path=${__user_destination_path:-$__destination_path}
-  # fi
-
-  # if [[ $__bin_path_provided = false ]]; then
-  #   local __user_bin_path
-  #   read -rep "$(_question) Bin path [$(tput bold)$(tput setaf 3)${__bin_path}$(tput sgr0)]:" __user_bin_path
-  #   __bin_path=${__user_bin_path:-$__bin_path}
-  # fi
-
+function _ask_dotfiles_path {
   if [[ $__dotfiles_path_provided = false ]]; then
     local __user_dotfiles_path
     read -rep "$(_question) Dotfiles path [$(tput bold)$(tput setaf 3)${__dotfiles_path}$(tput sgr0)]:" __user_dotfiles_path
@@ -132,7 +115,7 @@ if [ -d "$__destination_path" ]; then
   exit 0
 fi
 
-_print_arguments
+_ask_dotfiles_path
 _print_installing
 printf "$(_success) Dots installed, run %sdots$(_reset_to_normal) to see options" "$(tput bold)$(tput setaf 6)"
 echo
@@ -159,15 +142,12 @@ fi
 ln -fs "${__destination_path}/dots.complete.bash" "${__bash_user_completions_dir}/dots"
 
 ## zsh completions
-# TODO Make native zsh completions
 if _is_shell_installed "zsh"; then
-  if [[ $(grep -c "bashcompinit" < "$HOME/.zshrc") -eq 0 ]]; then
-    echo "autoload bashcompinit && bashcompinit" | tee -a "$HOME/.zshrc" >/dev/null
+  if [ ! -d "$__zsh_user_completions_dir" ]; then
+    mkdir -p "$__zsh_user_completions_dir"
   fi
 
-  if [[ $(grep -c "dots.complete.bash" < "$HOME/.zshrc") -eq 0 ]]; then
-    echo "source ${__destination_path}/dots.complete.bash" | tee -a "$HOME/.zshrc" >/dev/null
-  fi
+  ln -fs "${__destination_path}/dots.complete.zsh" "${__zsh_user_completions_dir}/_dots"
 fi
 
 ## fish completions
