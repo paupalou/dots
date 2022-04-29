@@ -52,9 +52,9 @@ function _print_main {
   _print_option_param "-v or --verbose" "Verbose mode, show each symlink path."
 
   _print_option "config" "Prints dots user config"
-  _print_option_param "-c or --create" "Create dots user config file"
-  _print_option_param "-d or --default" "Prints dots default config"
-  _print_option_param "-e or --edit" "Open \$EDITOR to edit dots config"
+  _print_option_param "create" "Create dots user config file"
+  _print_option_param "default" "Prints dots default config"
+  _print_option_param "edit" "Open \$EDITOR to edit dots config"
 
   _print_option "version" "Print dots version"
   _print_option "update" "Update dots"
@@ -83,13 +83,13 @@ function _config {
     exit
   fi
 
-  if [[ $__dots_sub_param == '--create' || $__dots_sub_param == '-c' ]]; then
+  if [[ $__dots_sub_param == 'create' ]]; then
     _create_config
     exit
-  elif [[ $__dots_sub_param == '--edit' || $__dots_sub_param == '-e' ]]; then
+  elif [[ $__dots_sub_param == 'edit' ]]; then
     _edit_config
     exit
-  elif [[ $__dots_sub_param == '--default' || $__dots_sub_param == '-d' ]]; then
+  elif [[ $__dots_sub_param == 'default' ]]; then
     _echo_config default
     exit
   else
