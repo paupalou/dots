@@ -183,7 +183,15 @@ function _echo_config {
 }
 
 function _edit_config() {
-  $EDITOR "$__user_config"
+  if [[ -n $EDITOR ]]; then
+    $EDITOR "$__user_config"
+  elif [[ -n $(which nvim) ]];then
+    nvim "$__user_config"
+  elif [[ -n $(which vim) ]];then
+    vim "$__user_config"
+  else
+    vi "$__user_config"
+  fi
 }
 
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
