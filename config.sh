@@ -150,9 +150,11 @@ function _create_config {
       exit
     fi
   else
+    if [[ ! -d ${__user_config}/dots/.config ]]; then
+      mkdir -p "${__user_config}/dots/.config"
+    fi
     _link_dots_config "$dots_config"
   fi
-
 }
 
 function _write_to_config {
