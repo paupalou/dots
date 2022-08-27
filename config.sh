@@ -150,8 +150,8 @@ function _create_config {
       exit
     fi
   else
-    if [[ ! -d ${__user_config}/dots/.config ]]; then
-      mkdir -p "${__user_config}/dots/.config"
+    if [[ ! -d $(dirname "$__user_config") ]]; then
+      mkdir -p "$(dirname "$__user_config")"
     fi
     _link_dots_config "$dots_config"
   fi
