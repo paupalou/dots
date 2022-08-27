@@ -61,13 +61,16 @@ function _directory_is_in_path {
   fi
 }
 
-function _ask_dotfiles_path {
+function _set_dotfiles_path {
   if [[ $__dotfiles_path_provided = false ]]; then
     local __user_dotfiles_path
     read -rep "$(_question) Dotfiles path [$(tput bold)$(tput setaf 3)${__dotfiles_path}$(tput sgr0)]:" __user_dotfiles_path
     __dotfiles_path=${__user_dotfiles_path:-$__dotfiles_path}
   fi
+  echo
+}
 
+function _generate_user_config {
   local dots_config=${__dotfiles_path}/dots/.config/dots/config.yaml
 
   if [[ ! -d ${__dotfiles_path}/dots/.config/dots ]]; then
@@ -82,7 +85,6 @@ function _ask_dotfiles_path {
   if [[ $(grep "dotfiles_path" "$dots_config" --count) == 0 ]]; then
     echo "dotfiles_path: ${__dotfiles_path}" >> "$dots_config"
   fi
-  echo
 }
 
 function _question {
@@ -105,56 +107,74 @@ function _print_installing {
   printf "$(_info) Installing dots on %s%s%s" "$(tput setaf 6)$(tput bold)" "$__destination_path" "$(_reset_to_normal)"
   echo
   echo
-  _clone_dots
+}
+function _print_installing_success {
+  printf "$(_success) Dots installed, run %sdots$(_reset_to_normal) to see options" "$(tput bold)$(tput setaf 6)"
   echo
 }
 
-if [ -d "$__destination_path" ]; then
+
+function _check_dots_bin_path {
+  if _directory_is_in_path "$__bin_path"; then
+    if [ ! -d "$__bin_path" ]; then
+      mkdir -p "$__bin_path"
+    fi
+
+    ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
+  else
+    # TODO Add ~/.local/bin to the path if needed
+    printf "$(_error) %s is not in $(tput setaf 1)$(tput bold)\$PATH" "$__bin_path"
+    _reset_to_normal
+    echo
+  fi
+}
+
+function _install_shell_completions {
+  # install completions
+  ## bash completions
+  if [ ! -d "$__bash_user_completions_dir" ]; then
+    mkdir -p "$__bash_user_completions_dir"
+  fi
+
+  ln -fs "${__destination_path}/dots.complete.bash" "${__bash_user_completions_dir}/dots"
+
+  ## zsh completions
+  if _is_shell_installed "zsh"; then
+    if [ ! -d "$__zsh_user_completions_dir" ]; then
+      mkdir -p "$__zsh_user_completions_dir"
+    fi
+
+    ln -fs "${__destination_path}/dots.complete.zsh" "${__zsh_user_completions_dir}/_dots"
+  fi
+
+  ## fish completions
+  if _is_shell_installed "fish"; then
+    if [ ! -d "$__fish_user_completions_dir" ]; then
+      mkdir -p "$__fish_user_completions_dir"
+    fi
+
+    ln -fs "${__destination_path}/dots.complete.fish" "${__fish_user_completions_dir}/dots.fish"
+  fi
+}
+
+function _dots_already_installed {
+  if [ -d "$__destination_path" ]; then
+    true
+  else
+    false
+  fi
+}
+
+if _dots_already_installed; then
   printf "$(_info) Dots its already installed in %s%s%s" "$(tput bold)$(tput setaf 6)" "$__destination_path" "$(_reset_to_normal)"
   echo
   exit 0
 fi
 
 _ask_dotfiles_path
+_generate_user_config
 _print_installing
-printf "$(_success) Dots installed, run %sdots$(_reset_to_normal) to see options" "$(tput bold)$(tput setaf 6)"
-echo
-
-# Add ~/.local/bin to the path if needed
-if _directory_is_in_path "$__bin_path"; then
-  if [ ! -d "$__bin_path" ]; then
-    mkdir -p "$__bin_path"
-  fi
-
-  ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
-else
-  printf "$(_error) %s is not in $(tput setaf 1)$(tput bold)\$PATH" "$__bin_path"
-  _reset_to_normal
-  echo
-fi
-
-# install completions
-## bash completions
-if [ ! -d "$__bash_user_completions_dir" ]; then
-  mkdir -p "$__bash_user_completions_dir"
-fi
-
-ln -fs "${__destination_path}/dots.complete.bash" "${__bash_user_completions_dir}/dots"
-
-## zsh completions
-if _is_shell_installed "zsh"; then
-  if [ ! -d "$__zsh_user_completions_dir" ]; then
-    mkdir -p "$__zsh_user_completions_dir"
-  fi
-
-  ln -fs "${__destination_path}/dots.complete.zsh" "${__zsh_user_completions_dir}/_dots"
-fi
-
-## fish completions
-if _is_shell_installed "fish"; then
-  if [ ! -d "$__fish_user_completions_dir" ]; then
-    mkdir -p "$__fish_user_completions_dir"
-  fi
-
-  ln -fs "${__destination_path}/dots.complete.fish" "${__fish_user_completions_dir}/dots.fish"
-fi
+_clone_dots
+_print_installing_success
+_check_dots_bin_path
+_install_shell_completions
