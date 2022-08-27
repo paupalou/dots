@@ -15,7 +15,7 @@ function _print_option {
   local max_column_width description_padding
 
   max_column_width=$(_dots_setting "main_option_max_width")
-  description_padding=$(("$max_column_width" - ${#option}))
+  description_padding=$((max_column_width - ${#option}))
 
   _space
   if [[ -z $is_sub_option ]]; then
@@ -27,7 +27,7 @@ function _print_option {
     sub_option_padding=$(_dots_setting "main_sub_option_padding")
     _repeat "$sub_option_padding" " "
     _print_colored "$option" "$(_dots_color "main_sub_option_command")"
-    description_padding=$(("$max_column_width" - "$sub_option_padding" - ${#option}))
+    description_padding=$((max_column_width - sub_option_padding - ${#option}))
     _repeat "$description_padding" " "
     _print_colored "$description" "$(_dots_color "main_sub_option_description")"
   fi
