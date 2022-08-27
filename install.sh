@@ -171,7 +171,7 @@ if _dots_already_installed; then
   exit 0
 fi
 
-_ask_dotfiles_path
+_set_dotfiles_path
 _generate_user_config
 _print_installing
 _clone_dots
