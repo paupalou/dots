@@ -58,10 +58,10 @@ function _box_start {
   local pending_border
   if [[ "${#box_title}" -eq 0 ]]; then
     # 2 for each border
-    pending_border=$(($(_box_max_width) - 2 - "$padding_left" - ${#box_title}))
+    pending_border=$(($(_box_max_width) - 2 - $padding_left - ${#box_title}))
   else
     # 4 , 2 more for each space at start & end of $box_title
-    pending_border=$(($(_box_max_width) - 4 - "$padding_left" - ${#box_title}))
+    pending_border=$(($(_box_max_width) - 4 - $padding_left - ${#box_title}))
   fi
 
   _print_colored "$line_start" "$(_box_style)"

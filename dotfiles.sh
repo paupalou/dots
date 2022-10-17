@@ -36,7 +36,7 @@ function _print_topic {
   _print_colored "$sync_topic_icon_char" "$(_dots_color "sync_topic_icon_style")"
   _space
   _print_colored "$topic" "$(_dots_color "sync_topic_style")"
-  _box_line_end $((${#topic} + 1 + $(echo $sync_topic_icon_char | wc -L)))
+  _box_line_end $((${#topic} + 1 + $(wc -w <<< $sync_topic_icon_char)))
   _newline
 }
 
@@ -60,7 +60,7 @@ function _print_skipped_files {
   _print "$file_count"
   _space
   _print_colored "files" "$lgray"
-  _box_line_end "$(( 2 + $(echo $message | wc -L)))"
+  _box_line_end $(( 2 + ${#message} ))
   _newline
 }
 
@@ -75,12 +75,12 @@ function _sync_dotfiles {
   _disable_globbing
   excluded_files=$(_name_not_match "path.fish")
   excluded_paths=$(_path_not_match ".git")
-  dotfiles="${HOME}/dotfiles"
+  dotfiles=$(_dots_setting "dotfiles_path")
 
   # TODO Check if fd is available then find as fallback
   # for topic in $(fd --base-directory $dotfiles --type d | sort); do
 
-  for topic in $(find -H "$dotfiles" -mindepth 1 -maxdepth 1 -type d $excluded_paths $excluded_files -printf '%P\n' | sort); do
+  for topic in $(find -H "$dotfiles" -mindepth 1 -maxdepth 1 -type d $excluded_paths $excluded_files -exec basename {} \; | sort); do
     _disable_globbing
     excluded_paths=$(_path_not_match "*/.git/*")
     files=$(find -H "$dotfiles/$topic" -type f $excluded_paths $excluded_files ! -name '*:*')
