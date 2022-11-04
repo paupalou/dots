@@ -137,7 +137,7 @@ function _link_file {
 
   if [ "$skip" != "true" ]; then
     if [[ ! -d  $(dirname "$dst") ]]; then
-      mkdir -p $dst
+      mkdir -p "$(dirname "$dst")"
     fi
 
     ln -sfn "$src" "$dst"
