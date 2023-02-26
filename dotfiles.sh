@@ -156,22 +156,20 @@ function _file_synced {
   local file_full_path
   # src=$(basename "$1")
   file_name=$(basename "$1")
-  file_path=\~/$(echo $destiny | cut -d'/' -f4-)
-  file_full_path=$file_path/$file_name
+  file_path=${destiny/#$HOME/'~'}
 
   src_max_length=$(($(_box_line_max_length) - 4))
-  item_length="  x ${file_full_path:0:src_max_length}"
+  item_length="  x ${file_path:0:src_max_length}"
 
   _box_line_start
   _space
   _space
   _success_icon
   _space
-  _print_colored "${file_full_path:0:src_max_length}" "$lgray"
+  _print_colored "${file_path:0:src_max_length}" "$lgray"
   _box_line_end ${#item_length}
   _newline
 }
-
 
 function _file_linked {
   local destiny=$2
