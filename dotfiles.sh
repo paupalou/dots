@@ -161,12 +161,19 @@ function _file_synced {
   src_max_length=$(($(_box_line_max_length) - 4))
   item_length="  x ${file_path:0:src_max_length}"
 
+  local printable_path=${file_path:0:src_max_length}
+
+  if [[ ${#file_path} -gt $(_box_line_max_length) ]]; then
+    printable_path=${printable_path:0:$((${#printable_path} - 3))}
+    printable_path="${printable_path}..."
+  fi
+
   _box_line_start
   _space
   _space
   _success_icon
   _space
-  _print_colored "${file_path:0:src_max_length}" "$lgray"
+  _print_colored "$printable_path" "$lgray"
   _box_line_end ${#item_length}
   _newline
 }
@@ -177,31 +184,42 @@ function _file_linked {
   local src
   local item_length
   local destiny_max_length
+  local file_path
   src=$(basename "$1")
+  file_path=${destiny/#$HOME/'~'}
 
-  item_length="x $src"
-  src_max_length=$(($(_box_line_max_length) - 2))
-  destiny_max_length=$src_max_length
+  src_max_length=$(($(_box_line_max_length) - 4))
+  destiny_max_length=$((src_max_length - 2))
+  item_length="  x ${src:0:src_max_length}"
+
+  local printable_file_name=${src:0:src_max_length}
+  if [[ ${#src} -gt $(_box_line_max_length) ]]; then
+    printable_file_name=${printable_file_name:0:$((${#printable_file_name} - 3))}
+    printable_file_name="${printable_file_name}..."
+  fi
 
   _box_line_start
   _space
   _space
   _link_icon
   _space
-  _print_colored "${src:0:src_max_length}" "$bold"
-  _box_line_end $((${#item_length} + 2))
+  _print_colored "${printable_file_name}" "$bold"
+  _box_line_end ${#item_length}
   _newline
 
   _box_line_start
   _repeat 4 " "
 
-  item_length="└ ${destiny}"
+  local printable_path=${file_path:0:destiny_max_length}
+  if [[ ${#file_path} -gt $(_box_line_max_length) ]]; then
+    printable_path=${printable_path:0:$((${#printable_path} - 3))}
+    printable_path="${printable_path}..."
+  fi
+
+  item_length="    └ ${file_path:0:destiny_max_length}"
   _print_colored "└" "$dgray"
   _space
-  _print_colored "${destiny:0:$destiny_max_length}" "$lgray"
-  if [[ ${#item_length} -gt $(_box_line_max_length) ]]; then
-    item_length="└ ${destiny:0:destiny_max_length}"
-  fi
-  _box_line_end $((${#item_length} + 4))
+  _print_colored "${printable_path}" "$lgray"
+  _box_line_end ${#item_length}
   _newline
 }
