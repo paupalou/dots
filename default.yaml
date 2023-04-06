@@ -1,12 +1,30 @@
 # default dots config settings (read-only)
 
 # core
-dotfiles_path: $HOME/dotfiles
+dotfiles:
+  path: $HOME/.dotfiles
 
 # misc
 verbose: false
 
 # theme
+title:
+  style:
+    - bold
+    - uline
+  icon:
+    char: 
+    style:
+      first:
+        - red
+        - bold
+      second:
+        - green
+        - bold
+      third:
+        - blue
+        - bold
+
 box:
   size: 72
   padding: 1
@@ -17,10 +35,6 @@ box:
     - bold
     - lblue
   char:
-    # top_left: ┌
-    # top_right: ┐
-    # bottom_left: └
-    # bottom_right: ┘
     top_left: ╭
     top_right: ╮
     bottom_left: ╰
@@ -35,7 +49,15 @@ success:
       - green
       - bold
 
+error:
+  icon:
+    char: 
+    style:
+      - red
+      - bold
+
 sync:
+  title: lgray
   topic:
     icon:
       char: 

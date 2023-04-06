@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+# do not re-source this file if its already sourced
+if [[ -f $__user_config ]] || [[ -f $__default_config ]]; then
+  return
+fi
+
 # shellcheck disable=SC1003
 
 # Based on https://gist.github.com/pkuczynski/8665367
@@ -88,10 +94,22 @@ function _read_config_value {
 function _dots_setting {
   _read_config_value "$1"
   local result
+  local user_directory
+  user_directory="$HOME"
   for i in "${__config_value[@]}"; do
     result+="$i"
   done
-  echo "$result"
+
+  case $result in
+    *"\$HOME"*)
+      echo "${result/\$HOME/${user_directory}}"
+      ;;
+    *"~"*)
+      echo "${result/\~/${user_directory}}"
+      ;;
+    *)
+      echo "$result"
+  esac
 }
 
 function _dots_color {

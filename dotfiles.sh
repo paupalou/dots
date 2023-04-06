@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2086
 
+if [[ "$__dots_dotfiles_loaded" == true ]]; then
+  return 0
+fi
+__dots_dotfiles_loaded=true
+
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
 
 source "${__dots_folder}/system.sh"
@@ -8,13 +13,8 @@ source "${__dots_folder}/config.sh"
 source "${__dots_folder}/printer.sh"
 source "${__dots_folder}/box.sh"
 
-function _name_not_match {
-  local result
-  for i in "${@}"; do
-    result+=" ! -name $i"
-  done
-
-  echo "$result"
+function _excluded_files {
+  echo -e \( \( ! -path "*/fish/*" -a ! -name "*.fish" \) -o -path "*/fish/*" -a -name "*" \)
 }
 
 function _path_not_match {
@@ -36,7 +36,7 @@ function _print_topic {
   _print_colored "$sync_topic_icon_char" "$(_dots_color "sync_topic_icon_style")"
   _space
   _print_colored "$topic" "$(_dots_color "sync_topic_style")"
-  _box_line_end $((${#topic} + 1 + $(wc -w <<< $sync_topic_icon_char)))
+  _box_line_end $((${#topic} + 1 + $(wc -w <<<$sync_topic_icon_char)))
   _newline
 }
 
@@ -60,12 +60,12 @@ function _print_skipped_files {
   _print "$file_count"
   _space
   _print_colored "files" "$lgray"
-  _box_line_end $(( 2 + ${#message} ))
+  _box_line_end $((2 + ${#message}))
   _newline
 }
 
 function _sync_dotfiles {
-  _box_start dotfiles
+  _box_start "sync dotfiles" "$(_dots_color "sync_title")"
   _disable_input
 
   local verbose=$1
@@ -73,7 +73,8 @@ function _sync_dotfiles {
   local excluded_files excluded_paths dotfiles files
 
   _disable_globbing
-  excluded_files=$(_name_not_match "path.fish")
+  dotfiles_tag=$(_dots_setting "dotfiles_tag")
+  excluded_files=$(_excluded_files)
   excluded_paths=$(_path_not_match ".git")
   dotfiles=$(_dots_setting "dotfiles_path")
 
@@ -83,7 +84,7 @@ function _sync_dotfiles {
   for topic in $(find -H "$dotfiles" -mindepth 1 -maxdepth 1 -type d $excluded_paths $excluded_files -exec basename {} \; | sort); do
     _disable_globbing
     excluded_paths=$(_path_not_match "*/.git/*")
-    files=$(find -H "$dotfiles/$topic" -type f $excluded_paths $excluded_files ! -name '*:*')
+    files=$(find -H "$dotfiles/$topic" -type f $excluded_paths $excluded_files)
     # files=$(fd . ${dotfiles}/${topic} --type f --hidden --exclude '*:*' --exclude path.fish --exclude '.git')
     local skipped_files_counter=0
 
@@ -92,15 +93,33 @@ function _sync_dotfiles {
     fi
     _enable_globbing
     for file_full_path in $files; do
-      file_name=$(basename "$file_full_path")
+      file=$(basename "$file_full_path")
+      # tagged files processing
+      # avoid processing same file twice
+      if [[ $file =~ ":" ]]; then
+        if [[ ! $file =~ :${dotfiles_tag}.* ]]; then
+          # tag doest not match, continue with next file
+          continue
+        else
+          if [[ -f ${file_full_path/:*./.} ]]; then
+            # default file exists, this file will be processed later
+            continue
+          else 
+            # default file not exists, convert this file to default
+            # _grab_file will get correct one
+            file=${file/:*./.}
+          fi
+        fi
+      fi
+
       src_dirname=$(dirname "$file_full_path")
       file_depth=$(echo "$src_dirname" | grep -o / | wc -l)
       if [[ $file_depth -lt 5 ]]; then
-        destiny=$HOME/$file_name
+        destiny=$HOME/$file
       else
-        destiny=$HOME/$(echo "$src_dirname" | cut -d'/' -f6-)/$file_name
+        destiny=$HOME/$(echo "$src_dirname" | cut -d'/' -f6-)/$file
       fi
-      matching_file=$(_grab_file "$src_dirname/$file_name")
+      matching_file=$(_grab_file "$src_dirname/$file")
 
       _link_file "$matching_file" "$destiny" "$verbose"
     done
@@ -116,9 +135,8 @@ function _sync_dotfiles {
 }
 
 function _link_file {
-  # local src=$1 dst=$2 print_each_skipped_file=$4
   local src=$1 dst=$2 verbose=$3
-  local overwrite backup skip action
+  local skip
 
   if [ -f "$dst" ] || [ -d "$dst" ] || [ -L "$dst" ]; then
     if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]; then
@@ -136,7 +154,7 @@ function _link_file {
   fi
 
   if [ "$skip" != "true" ]; then
-    if [[ ! -d  $(dirname "$dst") ]]; then
+    if [[ ! -d $(dirname "$dst") ]]; then
       mkdir -p "$(dirname "$dst")"
     fi
 
@@ -149,13 +167,9 @@ function _link_file {
 function _file_synced {
   local destiny=$2
 
-  local src
   local item_length
-  local file_name
   local file_path
   local file_full_path
-  # src=$(basename "$1")
-  file_name=$(basename "$1")
   file_path=${destiny/#$HOME/'~'}
 
   src_max_length=$(($(_box_line_max_length) - 4))

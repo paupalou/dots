@@ -1,4 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+if [[ "$__dots_colors_loaded" == true ]]; then
+  return 0
+fi
+__dots_colors_loaded=true
 
 ## Foreground
 # default color

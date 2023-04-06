@@ -9,6 +9,7 @@ source "${__dots_folder}/dotfiles.sh"
 
 __dots_param=$1
 __dots_sub_param=$2
+__dots_third_param=$3
 
 function _print_option {
   local option=$1 description=$2 is_sub_option=$3
@@ -41,10 +42,6 @@ function _print_option_param {
 }
 
 function _print_main {
-  _print_colored "Utility to manage your dotfiles"
-  _newline
-  _newline
-
   _print_colored "Options:" "$bold"
   _newline
 
@@ -63,12 +60,19 @@ function _print_main {
 }
 
 function _sync {
+  local dotfiles_path
+  dotfiles_path=$(_dots_setting "dotfiles_path")
+  if [[ ! -d "$dotfiles_path" ]]; then
+    _print_error "dotfiles path is not set"
+    exit
+  fi
+
   if [[ -z $__dots_sub_param ]]; then
     _sync_dotfiles "$(_dots_setting "verbose")"
     exit
   fi
 
-  if [[ $__dots_sub_param == '--verbose' || $__dots_sub_param == '-v' ]] ; then
+  if [[ $__dots_sub_param == '--verbose' || $__dots_sub_param == '-v' ]]; then
     _sync_dotfiles true
     exit
   else
@@ -79,6 +83,17 @@ function _sync {
 
 function _config {
   if [[ -z $__dots_sub_param ]]; then
+    if [[ ! -f $__user_config ]]; then
+      _command=""
+      _print_error "Unable to locate user config file, using default values"
+      _space 4
+      _print_colored "If you want to customise how dots behaves create a configuration file by running"
+      _newline
+      _space 4
+      _print_colored "dots config create" "$bold"
+      _newline
+      exit
+    fi
     _echo_config
     exit
   fi
@@ -88,6 +103,16 @@ function _config {
     exit
   elif [[ $__dots_sub_param == 'edit' ]]; then
     _edit_config
+    exit
+  elif [[ $__dots_sub_param == 'get' ]]; then
+    if [[ -z $__dots_third_param ]]; then
+      _print_error "config get needs a value"
+      exit
+    fi
+    setting_value="$(_dots_setting "$__dots_third_param")"
+    if [[ -n $setting_value ]]; then
+      echo "$setting_value"
+    fi
     exit
   elif [[ $__dots_sub_param == 'default' ]]; then
     _echo_config default
@@ -115,7 +140,10 @@ function _print_incorrect_argument {
   _newline
 }
 
+
 if [[ -z $__dots_param ]]; then
+  _print_dots_title
+  _newline
   _print_main
   exit
 fi
@@ -129,11 +157,9 @@ if [[ $__dots_param == 'config' ]]; then
 fi
 
 if [[ $__dots_param == 'version' || $__dots_param == '-v' ]]; then
-  _print dots
-  _space
-  _print_colored version "$(_dots_color "version_word")"
-  _space
-  _print_colored "$__dots_version" "$(_dots_color "version_number")"
+  version=$(_print_colored "version" "$(_dots_color "version_word")")
+  version_number=$(_print_colored "$__dots_version" "$(_dots_color "version_number")")
+  _print_dots_title "$version" "$version_number"
   _newline
   exit
 fi
@@ -144,4 +170,3 @@ if [[ $__dots_param == 'update' ]]; then
 fi
 
 _print_incorrect_argument "$__dots_param"
-

@@ -1,4 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+if [[ $__dots_box_loaded == true ]]; then
+  return 0
+fi
+__dots_box_loaded=true
 
 __dots_folder=$(dirname "$(readlink "$(which dots)")")
 
@@ -37,14 +42,17 @@ function _box_padding {
   echo "$box_padding"
 }
 
+# shellcheck disable=SC2004,SC2119
 function _box_start {
-  local box_title=$1
+  local box_title
   local line_start
   local line_end
   local filler
   line_start=$(_dots_setting "box_char_top_left")
   line_end=$(_dots_setting "box_char_top_right")
   filler=$(_dots_setting "box_char_fill_x")
+  box_title=$(_print_dots_title "$(_print_colored "$1" "$2")")
+  title_length=$(( 9 + ${#1} ))
 
   local padding_left=8
 
@@ -56,19 +64,19 @@ function _box_start {
   if [[ "$(_box_max_width)" -lt 10 ]]; then padding_left=0; fi
 
   local pending_border
-  if [[ "${#box_title}" -eq 0 ]]; then
+  if [[ "${title_length}" -eq 0 ]]; then
     # 2 for each border
-    pending_border=$(($(_box_max_width) - 2 - $padding_left - ${#box_title}))
+    pending_border=$(($(_box_max_width) - 2 - $padding_left - ${title_length}))
   else
     # 4 , 2 more for each space at start & end of $box_title
-    pending_border=$(($(_box_max_width) - 4 - $padding_left - ${#box_title}))
+    pending_border=$(($(_box_max_width) - 4 - $padding_left - ${title_length}))
   fi
 
   _print_colored "$line_start" "$(_box_style)"
   _repeat "$padding_left" "$filler" "$(_box_style)"
   if [[ "$pending_border" -lt 0 ]]; then
     _space
-    _print_colored "${box_title:0:$((${#box_title} - "${pending_border#-}"))}" "$(_box_title_style)"
+    _print_colored "${box_title:0:$((${title_length} - ${pending_border#-}))}" "$(_box_title_style)"
     _space
   elif [[ -n ${box_title} ]]; then
     _space
