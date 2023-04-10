@@ -139,9 +139,16 @@ function _link_dots_config {
 
 
 function _create_config {
+  _print_dots_title
+  _newline
+  read -p "Create a tag for this config [none]: " user_tag 
   local dotfiles_path dots_config
   eval dotfiles_path="$(_dots_setting "dotfiles_path")"
-  dots_config=${dotfiles_path}/dots/.config/dots/config.yaml
+  if [[ -n $user_tag ]]; then
+    dots_config=${dotfiles_path}/dots/.config/dots/config:${user_tag}.yaml
+  else
+    dots_config=${dotfiles_path}/dots/.config/dots/config.yaml
+  fi
 
   if [[ ! -d ${dotfiles_path}/dots/.config/dots ]]; then
     mkdir -p "${dotfiles_path}/dots/.config/dots"
@@ -150,6 +157,10 @@ function _create_config {
   if [[ ! -f $dots_config ]]; then
     touch "$dots_config"
     echo "# user config file" >> "$dots_config"
+    if [[ -n $user_tag ]]; then
+      echo "dotfiles:" >> "$dots_config"
+      echo "  tag: $user_tag" >> "$dots_config"
+    fi
   fi
 
   if [[ -f $__user_config ]]; then
