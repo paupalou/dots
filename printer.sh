@@ -63,6 +63,14 @@ function _repeat {
   for _i in $range; do _print_colored "${str}" "$3"; done
 }
 
+function _error_icon {
+  local error_char error_style
+  error_char=$(_dots_setting "error_icon_char")
+  error_style=$(_dots_color "error_icon_style")
+
+  _print_colored "$error_char" "$error_style"
+}
+
 function _success_icon {
   local success_char success_style
   success_char=$(_dots_setting "success_icon_char")
@@ -105,9 +113,6 @@ function _print_error {
   _print_colored "$error_char" "$error_style"
   _space 2
   _print_colored "$1"
-  # _print_colored "1. create a new user config"
-  # _space
-  # _print_colored "dots config create" "$bold$uline"
   _newline
 }
 
