@@ -73,7 +73,7 @@ function _sync_dotfiles {
   local excluded_files excluded_paths dotfiles files
 
   _disable_globbing
-  dotfiles_tag=$(_dots_setting "dotfiles_tag")
+  dots_tag=$(_dots_setting "dots_tag")
   excluded_files=$(_excluded_files)
   excluded_paths=$(_path_not_match ".git")
   dotfiles=$(_dots_setting "dotfiles_path")
@@ -97,7 +97,7 @@ function _sync_dotfiles {
       # tagged files processing
       # avoid processing same file twice
       if [[ $file =~ ":" ]]; then
-        if [[ ! $file =~ :${dotfiles_tag}.* ]]; then
+        if [[ ! $file =~ :${dots_tag}.* ]]; then
           # tag doest not match, continue with next file
           continue
         else

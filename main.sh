@@ -6,6 +6,7 @@ __dots_version=$(cat "$__dots_folder"/version)
 source "${__dots_folder}/printer.sh"
 source "${__dots_folder}/config.sh"
 source "${__dots_folder}/dotfiles.sh"
+source "${__dots_folder}/installers.sh"
 
 __dots_param=$1
 __dots_sub_param=$2
@@ -55,6 +56,8 @@ function _print_main {
 
   _print_option "version" "Print dots version"
   _print_option "update" "Update dots"
+
+  _print_option "install" "Install all packages defined install:[tag].yml"
 
   _newline
 }
@@ -166,6 +169,11 @@ fi
 
 if [[ $__dots_param == 'update' ]]; then
   _update
+  exit
+fi
+
+if [[ $__dots_param == 'install' ]]; then
+  _install
   exit
 fi
 

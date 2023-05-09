@@ -27,24 +27,24 @@ function _get_machine_hostname {
 	echo $(hostnamectl | grep 'Static hostname' | cut -d ":" -f 2 | cut -b 2-)
 }
 
-function _grab_file {
-	local generic_file=$1
-  local file_path=$(dirname $generic_file)
-  local file_basename=$(echo $(basename $generic_file) | cut -d "." -f 1)
-	local file_extension=$(echo $(basename $generic_file) | cut -d "." -f 2)
-
-	local expected_file="${file_path}/${file_basename}:$(_get_distro):$(_get_machine_hostname).${file_extension}"
-
-	if [ ! -f "$expected_file" ]; then
-    expected_file="${file_path}/${file_basename}:$(_get_distro).${file_extension}"
-	fi
-
-	if [ -f "$expected_file" ]; then
-		echo $expected_file
-	else
-		echo $generic_file
-	fi
-}
+# function _grab_file {
+# 	local generic_file=$1
+#   local file_path=$(dirname $generic_file)
+#   local file_basename=$(echo $(basename $generic_file) | cut -d "." -f 1)
+# 	local file_extension=$(echo $(basename $generic_file) | cut -d "." -f 2)
+#
+# 	local expected_file="${file_path}/${file_basename}:$(_get_distro):$(_get_machine_hostname).${file_extension}"
+#
+# 	if [ ! -f "$expected_file" ]; then
+#     expected_file="${file_path}/${file_basename}:$(_get_distro).${file_extension}"
+# 	fi
+#
+# 	if [ -f "$expected_file" ]; then
+# 		echo $expected_file
+# 	else
+# 		echo $generic_file
+# 	fi
+# }
 
 function _get_value {
 	local prop=$1_$2

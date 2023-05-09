@@ -28,8 +28,8 @@ function _enable_input {
   fi
 }
 
-function _get_dotfiles_tag {
-  _dots_setting "dotfiles_tag"
+function _get_dots_tag {
+  _dots_setting "tag"
 }
 
 function _grab_file {
@@ -43,7 +43,7 @@ function _grab_file {
   file_extension="$(basename "$generic_file" | cut -d "." -f 2)"
 
   local expected_file
-  expected_file="${file_path}/${file_basename}:$(_get_dotfiles_tag).${file_extension}"
+  expected_file="${file_path}/${file_basename}:$(_get_dots_tag).${file_extension}"
 
   if [ -f "$expected_file" ]; then
     echo "$expected_file"
