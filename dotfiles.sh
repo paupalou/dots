@@ -73,7 +73,7 @@ function _sync_dotfiles {
   local excluded_files excluded_paths dotfiles files
 
   _disable_globbing
-  dots_tag=$(_dots_setting "dots_tag")
+  dots_tag=$(_dots_setting "tag")
   excluded_files=$(_excluded_files)
   excluded_paths=$(_path_not_match ".git")
   dotfiles=$(_dots_setting "dotfiles_path")
