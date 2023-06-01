@@ -223,8 +223,7 @@ function _file_linked {
   fi
 
   _box_line_start
-  _space
-  _space
+  _space $left_padding
   _link_icon
   _space
   _print_colored "${printable_file_name}" "$bold"
@@ -233,7 +232,7 @@ function _file_linked {
 
   _box_line_start
   left_padding=4
-  _repeat $left_padding " "
+  _space $left_padding
 
   local printable_path=${file_path:0:destiny_max_length}
   if [[ ${#file_path} -gt $(_box_line_max_length) ]]; then
@@ -241,7 +240,7 @@ function _file_linked {
     printable_path="${printable_path}..."
   fi
 
-  item_length="└ ${file_path:0:destiny_max_length}"
+  item_length="└ ${printable_path}"
   _print_colored "└" "$dgray"
   _space
   _print_colored "${printable_path}" "$lgray"
