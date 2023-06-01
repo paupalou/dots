@@ -139,9 +139,10 @@ function _link_dots_config {
 
 
 function _create_config {
+  #shellcheck disable=SC2119
   _print_dots_title
   _newline
-  read -p "Create a tag for this config [none]: " user_tag 
+  read -rp "Create a tag for this config [none]: " user_tag 
   local dotfiles_path dots_config
   eval dotfiles_path="$(_dots_setting "dotfiles_path")"
   if [[ -n $user_tag ]]; then
