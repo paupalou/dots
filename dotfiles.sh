@@ -47,12 +47,15 @@ function _print_skipped_files {
   local message
   local left_padding
 
-  if [[ "$file_count" -eq 0 ]]; then
+  if [[ $file_count -eq 0 ]]; then
     return
   fi
 
-  message="x $file_count files"
   left_padding=2
+  message="x $file_count file"
+  if [[ $file_count -gt 1 ]]; then
+    message="${message}s"
+  fi
 
   _box_line_start
   _space $left_padding
@@ -60,7 +63,11 @@ function _print_skipped_files {
   _space
   _print "$file_count"
   _space
-  _print_colored "files" "$lgray"
+  if [[ $file_count -gt 1 ]]; then
+    _print_colored "files" "$lgray"
+  else
+    _print_colored "file" "$lgray"
+  fi
   _box_line_end $((left_padding + ${#message}))
   _newline
 }
