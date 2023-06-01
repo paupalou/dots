@@ -3,7 +3,7 @@
 __repository_url=https://github.com/paupalou/dots.git
 __destination_path=$HOME/.dots
 __bin_path=$HOME/.local/bin
-__dotfiles_path=$HOME/dotfiles
+__dotfiles_path=$HOME/.dotfiles
 __bash_user_completions_dir=$XDG_DATA_HOME/bash-completion/completions
 __zsh_user_completions_dir=$ZSH/completions
 __fish_user_completions_dir=$XDG_CONFIG_HOME/fish/completions
