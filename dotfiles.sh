@@ -30,20 +30,20 @@ function _print_topic {
   local topic=$1
   local sync_topic_icon_char
   local message
+
   sync_topic_icon_char=$(_dots_setting "sync_topic_icon_char")
+  message="x $topic"
 
   _box_line_start
   _print_colored "$sync_topic_icon_char" "$(_dots_color "sync_topic_icon_style")"
   _space
   _print_colored "$topic" "$(_dots_color "sync_topic_style")"
-  # _box_line_end $((${#topic} + 1 + $(wc -w <<<$sync_topic_icon_char)))
-   _box_line_end "$(_str_len "$sync_topic_icon_char $topic")"
+  _box_line_end ${#message}
   _newline
 }
 
 function _print_skipped_files {
   local file_count=$1
-  local success_icon_char
   local message
   local left_padding
 
@@ -51,8 +51,7 @@ function _print_skipped_files {
     return
   fi
 
-  success_icon_char=$(_dots_setting "success_icon_char")
-  message="$success_icon_char $file_count files"
+  message="x $file_count files"
   left_padding=2
 
   _box_line_start
@@ -62,7 +61,7 @@ function _print_skipped_files {
   _print "$file_count"
   _space
   _print_colored "files" "$lgray"
-  _box_line_end "$(( $left_padding + $(_str_len "$message")))"
+  _box_line_end $((left_padding + ${#message}))
   _newline
 }
 
@@ -106,7 +105,7 @@ function _sync_dotfiles {
           if [[ -f ${file_full_path/:*./.} ]]; then
             # default file exists, this file will be processed later
             continue
-          else 
+          else
             # default file not exists, convert this file to default
             # _grab_file will get correct one
             file=${file/:*./.}
@@ -168,16 +167,17 @@ function _link_file {
 
 function _file_synced {
   local destiny=$2
-
   local item_length
   local file_path
   local file_full_path
+  local left_padding
+  local printable_path
+
   file_path=${destiny/#$HOME/'~'}
-
   src_max_length=$(($(_box_line_max_length) - 4))
-  item_length="  x ${file_path:0:src_max_length}"
-
-  local printable_path=${file_path:0:src_max_length}
+  item_length="x ${file_path:0:src_max_length}"
+  printable_path=${file_path:0:src_max_length}
+  left_padding=2
 
   if [[ ${#file_path} -gt $(_box_line_max_length) ]]; then
     printable_path=${printable_path:0:$((${#printable_path} - 3))}
@@ -190,24 +190,24 @@ function _file_synced {
   _success_icon
   _space
   _print_colored "$printable_path" "$lgray"
-  _box_line_end ${#item_length}
-  # _box_line_end "$(_str_len "$item_length")"
+  _box_line_end $((left_padding + ${#item_length}))
   _newline
 }
 
 function _file_linked {
   local destiny=$2
-
   local src
   local item_length
   local destiny_max_length
   local file_path
+  local left_padding
+
   src=$(basename "$1")
   file_path=${destiny/#$HOME/'~'}
-
   src_max_length=$(($(_box_line_max_length) - 4))
   destiny_max_length=$((src_max_length - 2))
-  item_length="  x ${src:0:src_max_length}"
+  item_length="x ${src:0:src_max_length}"
+  left_padding=2
 
   local printable_file_name=${src:0:src_max_length}
   if [[ ${#src} -gt $(_box_line_max_length) ]]; then
@@ -221,11 +221,12 @@ function _file_linked {
   _link_icon
   _space
   _print_colored "${printable_file_name}" "$bold"
-  _box_line_end ${#item_length}
+  _box_line_end $((left_padding + ${#item_length}))
   _newline
 
   _box_line_start
-  _repeat 4 " "
+  left_padding=4
+  _repeat $left_padding " "
 
   local printable_path=${file_path:0:destiny_max_length}
   if [[ ${#file_path} -gt $(_box_line_max_length) ]]; then
@@ -233,10 +234,10 @@ function _file_linked {
     printable_path="${printable_path}..."
   fi
 
-  item_length="    └ ${file_path:0:destiny_max_length}"
+  item_length="└ ${file_path:0:destiny_max_length}"
   _print_colored "└" "$dgray"
   _space
   _print_colored "${printable_path}" "$lgray"
-  _box_line_end ${#item_length}
+  _box_line_end $((left_padding + ${#item_length}))
   _newline
 }
