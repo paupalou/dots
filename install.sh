@@ -96,7 +96,7 @@ function _info {
 }
 
 function _success {
-  printf "%%s" "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s" "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _error {
