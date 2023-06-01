@@ -92,15 +92,15 @@ function _question {
 }
 
 function _info {
-  printf "%s%s" "$(tput setaf 6)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s" "$(tput setaf 6)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _success {
-  printf "%s%s" "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
+  printf "%%s" "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _error {
-  printf "%s%s" "$(tput setaf 1)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s" "$(tput setaf 1)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _print_installing {
@@ -115,11 +115,11 @@ function _print_installing_success {
 
 
 function _check_dots_bin_path {
-  if _directory_is_in_path "$__bin_path"; then
-    if [ ! -d "$__bin_path" ]; then
-      mkdir -p "$__bin_path"
-    fi
+  if [ ! -d "$__bin_path" ]; then
+    mkdir -p "$__bin_path"
+  fi
 
+  if _directory_is_in_path "$__bin_path"; then
     ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
   else
     # TODO Add ~/.local/bin to the path if needed
