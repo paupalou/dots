@@ -117,9 +117,12 @@ function _box_line_start {
 
 function _box_line_end {
   # 1 per each border and box padding value per each side
-  local box_content_width=$(($(_box_max_width) - 2 - $(($(_box_padding) * 2))))
-  local spaces_needed=$((box_content_width - $1 + $(_box_padding)))
+  local box_content_width
+  local spaces_needed
   local filler
+
+  box_content_width=$(_box_line_max_length)
+  spaces_needed=$((box_content_width - $1 + $(_box_padding)))
   filler=$(_dots_setting "box_char_fill_y")
 
   _repeat "$spaces_needed" " "

@@ -45,6 +45,7 @@ function _print_skipped_files {
   local file_count=$1
   local success_icon_char
   local message
+  local left_padding
 
   if [[ "$file_count" -eq 0 ]]; then
     return
@@ -52,16 +53,16 @@ function _print_skipped_files {
 
   success_icon_char=$(_dots_setting "success_icon_char")
   message="$success_icon_char $file_count files"
+  left_padding=2
 
   _box_line_start
-  _space
-  _space
+  _space $left_padding
   _success_icon
   _space
   _print "$file_count"
   _space
   _print_colored "files" "$lgray"
-  _box_line_end "$(_str_len "$message")"
+  _box_line_end "$(( $left_padding + $(_str_len "$message")))"
   _newline
 }
 
