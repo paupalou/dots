@@ -16,6 +16,10 @@ function _newline {
   printf "\n"
 }
 
+function _str_len {
+  echo -n "$1" | wc -m
+}
+
 # shellcheck disable=SC2120
 function _space {
   if [ -z "$1" ]; then

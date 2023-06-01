@@ -36,7 +36,8 @@ function _print_topic {
   _print_colored "$sync_topic_icon_char" "$(_dots_color "sync_topic_icon_style")"
   _space
   _print_colored "$topic" "$(_dots_color "sync_topic_style")"
-  _box_line_end $((${#topic} + 1 + $(wc -w <<<$sync_topic_icon_char)))
+  # _box_line_end $((${#topic} + 1 + $(wc -w <<<$sync_topic_icon_char)))
+   _box_line_end "$(_str_len "$sync_topic_icon_char $topic")"
   _newline
 }
 
@@ -60,7 +61,7 @@ function _print_skipped_files {
   _print "$file_count"
   _space
   _print_colored "files" "$lgray"
-  _box_line_end $((2 + ${#message}))
+  _box_line_end "$(_str_len "$message")"
   _newline
 }
 
@@ -189,6 +190,7 @@ function _file_synced {
   _space
   _print_colored "$printable_path" "$lgray"
   _box_line_end ${#item_length}
+  # _box_line_end "$(_str_len "$item_length")"
   _newline
 }
 
