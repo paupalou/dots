@@ -239,7 +239,7 @@ function _file_linked {
     printable_path="${printable_path}..."
   fi
 
-  item_length="└ ${printable_path}"
+  item_length="x ${printable_path}"
   _print_colored "└" "$dgray"
   _space
   _print_colored "${printable_path}" "$lgray"
