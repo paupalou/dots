@@ -79,11 +79,11 @@ function _generate_user_config {
 
   if [[ ! -f $dots_config ]]; then
     touch "$dots_config"
-    echo "# user config file" >> "$dots_config"
+    echo "# user config file" >>"$dots_config"
   fi
 
   if [[ $(grep "dotfiles_path" "$dots_config" --count) == 0 ]]; then
-    echo "dotfiles_path: ${__dotfiles_path}" >> "$dots_config"
+    echo "dotfiles_path: ${__dotfiles_path}" >>"$dots_config"
   fi
 }
 
@@ -113,7 +113,6 @@ function _print_installing_success {
   echo
 }
 
-
 function _check_dots_bin_path {
   if [ ! -d "$__bin_path" ]; then
     mkdir -p "$__bin_path"
@@ -123,6 +122,22 @@ function _check_dots_bin_path {
   if ! _directory_is_in_path "$__bin_path"; then
     # TODO Add ~/.local/bin to the path if needed
     printf "$(_error) %s is not in $(tput setaf 1)$(tput bold)\$PATH" "$__bin_path"
+
+    if [[ "$SHELL" =~ "bash" ]]; then
+      if [ -f "$HOME/.bashrc" ]; then
+        echo 'its bash'
+        sed '/^PATH=/{h;s/=.*/:${__bin_path}/};${x;/^$/{s//PATH=$PATH:${__bin_path}/;H};x}' "$HOME/.bashrc"
+      fi
+    elif [[ "$SHELL" =~ "zsh" ]]; then
+      if [ -f "$HOME/.zshrc" ]; then
+        echo 'its zsh'
+      fi
+    elif [[ "$SHELL" =~ "fish" ]]; then
+      if [ -f "$HOME/$XDG_CONFIG_HOME/fish/config.fish" ]; then
+        echo 'its fish'
+      fi
+    fi
+
     _reset_to_normal
     echo
   fi
