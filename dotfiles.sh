@@ -192,8 +192,7 @@ function _file_synced {
   fi
 
   _box_line_start
-  _space
-  _space
+  _space $left_padding
   _success_icon
   _space
   _print_colored "$printable_path" "$lgray"
