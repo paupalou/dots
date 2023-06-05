@@ -43,6 +43,7 @@ function _add_path_entry {
 
   file="$1"
   entry="$2"
+  shell="$3"
   entry_string="export PATH"
 
   # if found entry
@@ -52,8 +53,7 @@ function _add_path_entry {
     sed -i "$ a export PATH=$PATH:${entry}" "$file"
   fi
 
-# shellcheck disable=SC1090
-  source "$file"
+  exec "$shell"
 }
 
 function _clone_dots {
@@ -145,16 +145,18 @@ function _check_dots_bin_path {
 
     if [[ "$SHELL" =~ "bash" ]]; then
       if [ -f "$HOME/.bashrc" ]; then
-        _add_path_entry "$HOME/.bashrc" "${__bin_path}"
+        _add_path_entry "$HOME/.bashrc" "${__bin_path}" "bash"
       fi
     elif [[ "$SHELL" =~ "zsh" ]]; then
       if [ -f "$HOME/.zshrc" ]; then
-        _add_path_entry "$HOME/.zshrc" "${__bin_path}"
+        _add_path_entry "$HOME/.zshrc" "${__bin_path}" "zsh"
       fi
     elif [[ "$SHELL" =~ "fish" ]]; then
       if ! grep -q -F "fish_add_path ${__bin_path}" "$HOME/.config/fish/config.fish"; then
         sed -i "$ a fish_add_path ${__bin_path}" "$HOME/.config/fish/config.fish"
       fi
+
+       exec "fish"
     fi
 
     echo
