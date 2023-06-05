@@ -210,5 +210,5 @@ _generate_user_config
 _print_installing
 _clone_dots
 _print_installing_success
-_check_dots_bin_path
 _install_shell_completions
+_check_dots_bin_path
