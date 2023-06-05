@@ -36,6 +36,23 @@ function _is_shell_installed {
   return 1
 }
 
+function _add_path_entry {
+  local file
+  local entry
+  local entry_string
+
+  file=$1
+  entry=$2
+  entry_string="export PATH"
+
+  # if found entry
+  if grep -q -F "$entry_string" "$file"; then
+    sed -i "s|^${entry_string}.*|&:${entry}|" "$file"
+  else # append it
+    sed -i "$ a export PATH=$PATH:/${entry}" "$file"
+  fi
+}
+
 function _clone_dots {
   local parent_dir
   parent_dir=$(dirname "$__destination_path")
@@ -120,25 +137,23 @@ function _check_dots_bin_path {
 
   ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
   if ! _directory_is_in_path "$__bin_path"; then
-    # TODO Add ~/.local/bin to the path if needed
     printf "$(_error) %s is not in $(tput setaf 1)$(tput bold)\$PATH" "$__bin_path"
+    _reset_to_normal
 
     if [[ "$SHELL" =~ "bash" ]]; then
       if [ -f "$HOME/.bashrc" ]; then
-        echo 'its bash'
-        sed '/^PATH=/{h;s/=.*/:${__bin_path}/};${x;/^$/{s//PATH=$PATH:${__bin_path}/;H};x}' "$HOME/.bashrc"
+        _add_path_entry "$HOME/.bashrc" "${__bin_path}"
       fi
     elif [[ "$SHELL" =~ "zsh" ]]; then
       if [ -f "$HOME/.zshrc" ]; then
-        echo 'its zsh'
+        _add_path_entry "$HOME/.zshrc" "${__bin_path}"
       fi
     elif [[ "$SHELL" =~ "fish" ]]; then
-      if [ -f "$HOME/$XDG_CONFIG_HOME/fish/config.fish" ]; then
-        echo 'its fish'
+      if ! grep -q -F "fish_add_path ${__bin_path}" "$HOME/.config/fish/config.fish"; then
+        sed -i "$ a fish_add_path ${__bin_path}" "$HOME/.config/fish/config.fish"
       fi
     fi
 
-    _reset_to_normal
     echo
   fi
 }
