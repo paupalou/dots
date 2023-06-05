@@ -41,16 +41,19 @@ function _add_path_entry {
   local entry
   local entry_string
 
-  file=$1
-  entry=$2
+  file="$1"
+  entry="$2"
   entry_string="export PATH"
 
   # if found entry
   if grep -q -F "$entry_string" "$file"; then
     sed -i "s|^${entry_string}.*|&:${entry}|" "$file"
   else # append it
-    sed -i "$ a export PATH=$PATH:/${entry}" "$file"
+    sed -i "$ a export PATH=$PATH:${entry}" "$file"
   fi
+
+# shellcheck disable=SC1090
+  source "$file"
 }
 
 function _clone_dots {
