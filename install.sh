@@ -87,7 +87,6 @@ function _set_dotfiles_path {
     read -rep "$(_question) Dotfiles path [$(tput bold)$(tput setaf 3)${__dotfiles_path}$(tput sgr0)]:" __user_dotfiles_path
     __dotfiles_path=${__user_dotfiles_path:-$__dotfiles_path}
   fi
-  echo
 }
 
 function _generate_user_config {
@@ -108,19 +107,19 @@ function _generate_user_config {
 }
 
 function _question {
-  printf "%s%s" "$(tput setaf 3)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s " "$(tput setaf 3)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _info {
-  printf "%s%s" "$(tput setaf 6)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s " "$(tput setaf 6)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _success {
-  printf "%s%s" "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s " "$(tput setaf 2)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _error {
-  printf "%s%s" "$(tput setaf 1)$(tput bold)" "$(_reset_to_normal)"
+  printf "%s%s " "$(tput setaf 1)$(tput bold)" "$(_reset_to_normal)"
 }
 
 function _print_installing {
@@ -140,7 +139,7 @@ function _check_dots_bin_path {
 
   ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
   if ! _directory_is_in_path "$__bin_path"; then
-    printf "$(_info) adding %s to $(tput bold)\$PATH" "$__bin_path"
+    printf "$(_info) Adding %s to $(tput bold)\$PATH" "$__bin_path"
     echo
     _reset_to_normal
 
