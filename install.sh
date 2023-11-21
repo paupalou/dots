@@ -64,7 +64,7 @@ function _clone_dots {
     mkdir -p "$parent_dir"
   fi
 
-  git clone "$__repository_url" "$__destination_path"
+  git clone "$__repository_url" "$__destination_path" > /dev/null 2>&1
 }
 
 function _reset_to_normal {
@@ -124,7 +124,6 @@ function _error {
 
 function _print_installing {
   printf "$(_info) Installing dots on %s%s%s" "$(tput setaf 6)$(tput bold)" "$__destination_path" "$(_reset_to_normal)"
-  echo
   echo
 }
 function _print_installing_success {
@@ -209,6 +208,6 @@ _set_dotfiles_path
 _generate_user_config
 _print_installing
 _clone_dots
-_print_installing_success
 _install_shell_completions
 _check_dots_bin_path
+_print_installing_success
