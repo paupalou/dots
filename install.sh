@@ -140,7 +140,8 @@ function _check_dots_bin_path {
 
   ln -fs "${__destination_path}/main.sh" "${__bin_path}/dots"
   if ! _directory_is_in_path "$__bin_path"; then
-    printf "$(_error) %s is not in $(tput setaf 1)$(tput bold)\$PATH" "$__bin_path"
+    printf "$(_info) adding %s to $(tput bold)\$PATH" "$__bin_path"
+    echo
     _reset_to_normal
 
     if [[ "$SHELL" =~ "bash" ]]; then
