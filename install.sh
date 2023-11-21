@@ -43,7 +43,6 @@ function _add_path_entry {
 
   file="$1"
   entry="$2"
-  shell="$3"
   entry_string="export PATH"
 
   # if found entry
@@ -52,8 +51,6 @@ function _add_path_entry {
   else # append it
     sed -i "$ a export PATH=$PATH:${entry}" "$file"
   fi
-
-  exec "$shell"
 }
 
 function _clone_dots {
@@ -64,7 +61,7 @@ function _clone_dots {
     mkdir -p "$parent_dir"
   fi
 
-  git clone "$__repository_url" "$__destination_path" > /dev/null 2>&1
+  git clone "$__repository_url" "$__destination_path" >/dev/null 2>&1
 }
 
 function _reset_to_normal {
@@ -144,18 +141,16 @@ function _check_dots_bin_path {
 
     if [[ "$SHELL" =~ "bash" ]]; then
       if [ -f "$HOME/.bashrc" ]; then
-        _add_path_entry "$HOME/.bashrc" "${__bin_path}" "bash"
+        _add_path_entry "$HOME/.bashrc" "${__bin_path}"
       fi
     elif [[ "$SHELL" =~ "zsh" ]]; then
       if [ -f "$HOME/.zshrc" ]; then
-        _add_path_entry "$HOME/.zshrc" "${__bin_path}" "zsh"
+        _add_path_entry "$HOME/.zshrc" "${__bin_path}"
       fi
     elif [[ "$SHELL" =~ "fish" ]]; then
       if ! grep -q -F "fish_add_path ${__bin_path}" "$HOME/.config/fish/config.fish"; then
         sed -i "$ a fish_add_path ${__bin_path}" "$HOME/.config/fish/config.fish"
       fi
-
-       exec "fish"
     fi
 
     echo
@@ -211,3 +206,11 @@ _clone_dots
 _install_shell_completions
 _check_dots_bin_path
 _print_installing_success
+
+if [[ "$SHELL" =~ "bash" ]]; then
+  exec "bash"
+elif [[ "$SHELL" =~ "zsh" ]]; then
+  exec "zsh"
+elif [[ "$SHELL" =~ "fish" ]]; then
+  exec "fish"
+fi
